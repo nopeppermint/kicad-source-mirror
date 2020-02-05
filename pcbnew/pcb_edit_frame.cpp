@@ -20,72 +20,74 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <fctsys.h>
-#include <kiface_i.h>
-#include <pgm_base.h>
-#include <confirm.h>
-#include <pcb_edit_frame.h>
 #include <3d_viewer/eda_3d_viewer.h>
-#include <fp_lib_table.h>
+#include <advanced_config.h> // For new DRC
+#include <autorouter/autoplacer_tool.h>
 #include <bitmaps.h>
-#include <trace_helpers.h>
-#include <pcbnew.h>
-#include <pcbnew_id.h>
-#include <tools/drc.h>
-#include <layer_widget.h>
-#include <pcb_layer_widget.h>
-#include <config_params.h>
-#include <footprint_edit_frame.h>
-#include <dialog_plot.h>
-#include <dialog_edit_footprint_for_BoardEditor.h>
-#include <dialogs/dialog_exchange_footprints.h>
-#include <dialog_board_setup.h>
-#include <convert_to_biu.h>
-#include <view/view_controls.h>
-#include <pcb_painter.h>
-#include <invoke_pcb_dialog.h>
-#include <class_track.h>
 #include <class_board.h>
 #include <class_module.h>
-#include <ws_proxy_view_item.h>
+#include <class_track.h>
+#include <config_params.h>
+#include <confirm.h>
 #include <connectivity/connectivity_data.h>
-#include <ratsnest_viewitem.h>
-#include <wildcards_and_files_ext.h>
-#include <kicad_string.h>
-#include <pcb_draw_panel_gal.h>
-#include <functional>
-#include <tool/tool_manager.h>
-#include <tool/tool_dispatcher.h>
-#include <tool/action_toolbar.h>
-#include <tool/common_control.h>
-#include <tool/common_tools.h>
-#include <tool/zoom_tool.h>
-#include <tools/selection_tool.h>
-#include <tools/pcbnew_picker_tool.h>
-#include <tools/point_editor.h>
-#include <tools/edit_tool.h>
-#include <tools/global_edit_tool.h>
-#include <tools/drawing_tool.h>
-#include <tools/point_editor.h>
-#include <tools/pcbnew_control.h>
-#include <tools/pcb_editor_control.h>
-#include <tools/pcb_inspection_tool.h>
-#include <tools/placement_tool.h>
-#include <tools/pad_tool.h>
-#include <tools/microwave_tool.h>
-#include <tools/position_relative_tool.h>
-#include <tools/zone_filler_tool.h>
-#include <tools/pcb_actions.h>
-#include <router/router_tool.h>
-#include <router/length_tuner_tool.h>
-#include <autorouter/autoplacer_tool.h>
-#include <gestfich.h>
+#include <convert_to_biu.h>
+#include <dialog_board_setup.h>
+#include <dialog_drc.h> // for DIALOG_DRC_WINDOW_NAME definition
+#include <dialog_drc_control.h>
+#include <dialog_edit_footprint_for_BoardEditor.h>
+#include <dialog_plot.h>
+#include <dialogs/dialog_exchange_footprints.h>
 #include <executable_names.h>
+#include <fctsys.h>
+#include <footprint_edit_frame.h>
+#include <fp_lib_table.h>
+#include <functional>
+#include <gestfich.h>
+#include <invoke_pcb_dialog.h>
+#include <kicad_string.h>
+#include <kiface_i.h>
+#include <layer_widget.h>
 #include <netlist_reader/board_netlist_updater.h>
 #include <netlist_reader/netlist_reader.h>
 #include <netlist_reader/pcb_netlist.h>
+#include <pcb_draw_panel_gal.h>
+#include <pcb_edit_frame.h>
+#include <pcb_layer_widget.h>
+#include <pcb_painter.h>
+#include <pcbnew.h>
+#include <pcbnew_id.h>
+#include <pgm_base.h>
+#include <ratsnest_viewitem.h>
+#include <router/length_tuner_tool.h>
+#include <router/router_tool.h>
+#include <tool/action_toolbar.h>
+#include <tool/common_control.h>
+#include <tool/common_tools.h>
+#include <tool/tool_dispatcher.h>
+#include <tool/tool_manager.h>
+#include <tool/zoom_tool.h>
+#include <tools/drawing_tool.h>
+#include <tools/drc.h>
+#include <tools/drc_manager.h>
+#include <tools/edit_tool.h>
+#include <tools/global_edit_tool.h>
+#include <tools/microwave_tool.h>
+#include <tools/pad_tool.h>
+#include <tools/pcb_actions.h>
+#include <tools/pcb_editor_control.h>
+#include <tools/pcb_inspection_tool.h>
+#include <tools/pcbnew_control.h>
+#include <tools/pcbnew_picker_tool.h>
+#include <tools/placement_tool.h>
+#include <tools/point_editor.h>
+#include <tools/position_relative_tool.h>
+#include <tools/selection_tool.h>
+#include <tools/zone_filler_tool.h>
+#include <trace_helpers.h>
+#include <view/view_controls.h>
+#include <wildcards_and_files_ext.h>
+#include <ws_proxy_view_item.h>
 #include <wx/wupdlock.h>
-#include <dialog_drc.h>     // for DIALOG_DRC_WINDOW_NAME definition
 
 #if defined(KICAD_SCRIPTING) || defined(KICAD_SCRIPTING_WXPYTHON)
 #include <python_scripting.h>
@@ -440,6 +442,7 @@ void PCB_EDIT_FRAME::setupTools()
     m_toolManager->RegisterTool( new ZONE_FILLER_TOOL );
     m_toolManager->RegisterTool( new AUTOPLACE_TOOL );
     m_toolManager->RegisterTool( new DRC );
+    m_toolManager->RegisterTool( new DRC_MANAGER );
     m_toolManager->InitTools();
 
     // Run the selection tool, it is supposed to be always active
@@ -490,11 +493,18 @@ void PCB_EDIT_FRAME::OnCloseWindow( wxCloseEvent& aEvent )
     // First close the DRC dialog.
     // For some reason, if the board editor frame is destroyed when the DRC
     // dialog currently open, Pcbnew crashes, At least on Windows.
-    DIALOG_DRC_CONTROL* open_dlg = static_cast<DIALOG_DRC_CONTROL*>(
+    DIALOG_DRC_CONTROL_OLD* open_dlg = static_cast<DIALOG_DRC_CONTROL_OLD*>(
                                         wxWindow::FindWindowByName( DIALOG_DRC_WINDOW_NAME ) );
 
     if( open_dlg )
         open_dlg->Close( true );
+
+    if( ADVANCED_CFG::GetCfg().m_newDrc )
+    {
+        if( auto dlg = static_cast<DIALOG_DRC_CONTROL*>(
+                wxWindow::FindWindowByName( DIALOG_DRC_WINDOW_NAME ) ) )
+            dlg->Close( true );
+    }
 
     if( IsContentModified() )
     {

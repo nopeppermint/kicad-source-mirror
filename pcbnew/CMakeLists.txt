@@ -62,6 +62,7 @@ set( PCBNEW_DIALOGS
     dialogs/dialog_copper_zones_base.cpp
     dialogs/dialog_create_array.cpp
     dialogs/dialog_create_array_base.cpp
+    dialogs/dialog_drc_control.cpp
     dialogs/dialog_drc.cpp
     dialogs/dialog_drc_base.cpp
     dialogs/dialog_edit_footprint_for_BoardEditor.cpp
@@ -256,6 +257,7 @@ set( PCBNEW_CLASS_SRCS
     cross-probing.cpp
     tools/drc.cpp
     tools/drc_clearance_test_functions.cpp
+    tools/drc_manager.cpp
     edit.cpp
     edit_track_width.cpp
     files.cpp

@@ -86,6 +86,11 @@ static const wxChar RealtimeConnectivity[] = wxT( "RealtimeConnectivity" );
  */
 static const wxChar CoroutineStackSize[] = wxT( "CoroutineStackSize" );
 
+/**
+ * Enable the experimental new DRC system
+ */
+static const wxChar NewDRC[] = wxT( "NewDRC" );
+
 } // namespace KEYS
 
 
@@ -166,7 +171,8 @@ ADVANCED_CFG::ADVANCED_CFG()
     m_EnableUsePadProperty = false;
     m_EnableUsePinFunction = false;
     m_realTimeConnectivity = true;
-    m_coroutineStackSize = AC_STACK::default_stack;
+    m_coroutineStackSize   = AC_STACK::default_stack;
+    m_newDrc               = false;
 
     loadFromConfigFile();
 }
@@ -212,6 +218,8 @@ void ADVANCED_CFG::loadSettings( wxConfigBase& aCfg )
     configParams.push_back( new PARAM_CFG_INT( true, AC_KEYS::CoroutineStackSize,
                                                &m_coroutineStackSize, AC_STACK::default_stack,
                                                AC_STACK::min_stack, AC_STACK::max_stack ) );
+
+    configParams.push_back( new PARAM_CFG_BOOL( true, AC_KEYS::NewDRC, &m_newDrc, false ) );
 
     wxConfigLoadSetups( &aCfg, configParams );
 

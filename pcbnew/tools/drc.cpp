@@ -24,6 +24,7 @@
  */
 
 #include <fctsys.h>
+#include <advanced_config.h> // for new DRC
 #include <pcb_edit_frame.h>
 #include <trigo.h>
 #include <board_design_settings.h>
@@ -51,11 +52,11 @@
 #include <netlist_reader/pcb_netlist.h>
 #include <math/util.h>      // for KiROUND
 
-#include <dialog_drc.h>
-#include <wx/progdlg.h>
 #include <board_commit.h>
-#include <geometry/shape_segment.h>
+#include <dialog_drc.h>
 #include <geometry/shape_arc.h>
+#include <geometry/shape_segment.h>
+#include <wx/progdlg.h>
 
 #include <drc/courtyard_overlap.h>
 #include "zone_filler_tool.h"
@@ -137,7 +138,7 @@ void DRC::ShowDRCDialog( wxWindow* aParent )
 
     if( !m_drcDialog )
     {
-        m_drcDialog = new DIALOG_DRC_CONTROL( this, m_pcbEditorFrame, aParent );
+        m_drcDialog = new DIALOG_DRC_CONTROL_OLD( this, m_pcbEditorFrame, aParent );
         updatePointers();
 
         m_drcDialog->SetRptSettings( m_doCreateRptFile, m_rptFilename );
@@ -1404,7 +1405,8 @@ void DRC::TestFootprints( NETLIST& aNetlist, BOARD* aPCB, EDA_UNITS aUnits, DRC_
 
 void DRC::setTransitions()
 {
-    Go( &DRC::ShowDRCDialog,              PCB_ACTIONS::runDRC.MakeEvent() );
+    if( !ADVANCED_CFG::GetCfg().m_newDrc )
+        Go( &DRC::ShowDRCDialog,              PCB_ACTIONS::runDRC.MakeEvent() );
 }
 
 

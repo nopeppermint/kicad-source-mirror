@@ -112,7 +112,7 @@
 
 
 class PCB_EDIT_FRAME;
-class DIALOG_DRC_CONTROL;
+class DIALOG_DRC_CONTROL_OLD;
 class BOARD_ITEM;
 class BOARD;
 class D_PAD;
@@ -185,7 +185,7 @@ typedef std::vector<DRC_ITEM*> DRC_LIST;
  */
 class DRC : public PCB_TOOL_BASE
 {
-    friend class DIALOG_DRC_CONTROL;
+    friend class DIALOG_DRC_CONTROL_OLD;
 
 public:
     DRC();
@@ -236,7 +236,7 @@ private:
     PCB_EDIT_FRAME*     m_pcbEditorFrame;   ///< The pcb frame editor which owns the board
     BOARD*              m_pcb;
     SHAPE_POLY_SET      m_board_outlines;   ///< The board outline including cutouts
-    DIALOG_DRC_CONTROL* m_drcDialog;
+    DIALOG_DRC_CONTROL_OLD* m_drcDialog;
     DRC_MARKER_FACTORY  m_markerFactory;    ///< Class that generates markers
 
     DRC_LIST            m_unconnected;      ///< list of unconnected pads, as DRC_ITEMs

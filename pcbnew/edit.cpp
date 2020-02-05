@@ -24,27 +24,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-#include <fctsys.h>
-#include <pgm_base.h>
-#include <kiface_i.h>
-#include <confirm.h>
-#include <gestfich.h>
-#include <pcb_edit_frame.h>
-#include <pcbnew_id.h>
-#include <footprint_edit_frame.h>
+#include <array_creator.h>
 #include <class_board.h>
+#include <class_dimension.h>
 #include <class_module.h>
+#include <class_pcb_target.h>
 #include <class_track.h>
 #include <class_zone.h>
-#include <class_pcb_target.h>
-#include <class_dimension.h>
-#include <pcb_layer_box_selector.h>
-#include <dialog_drc.h>
-#include <array_creator.h>
+#include <confirm.h>
 #include <connectivity/connectivity_data.h>
+#include <dialog_drc.h>
+#include <dialogs/dialog_text_properties.h>
+#include <fctsys.h>
+#include <footprint_edit_frame.h>
+#include <gestfich.h>
+#include <kiface_i.h>
+#include <pcb_edit_frame.h>
+#include <pcb_layer_box_selector.h>
+#include <pcbnew_id.h>
+#include <pgm_base.h>
 #include <tool/tool_manager.h>
 #include <tools/pcb_actions.h>
-#include <dialogs/dialog_text_properties.h>
 
 // Handles the selection of command events.
 void PCB_EDIT_FRAME::Process_Special_Functions( wxCommandEvent& event )

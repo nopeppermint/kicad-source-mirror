@@ -88,6 +88,11 @@ public:
      */
     int m_coroutineStackSize;
 
+    /**
+     * Enable experimental new DRC system
+     */
+    bool m_newDrc;
+
 private:
     ADVANCED_CFG();
 

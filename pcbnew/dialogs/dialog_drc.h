@@ -48,14 +48,14 @@ class BOARD_DESIGN_SETTINGS;
  */
 #define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
 
-class DIALOG_DRC_CONTROL: public DIALOG_DRC_CONTROL_BASE
+class DIALOG_DRC_CONTROL_OLD : public DIALOG_DRC_CONTROL_BASE
 {
 public:
     BOARD_DESIGN_SETTINGS  m_BrdSettings;
 
     /// Constructors
-    DIALOG_DRC_CONTROL( DRC* aTester, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
-    ~DIALOG_DRC_CONTROL();
+    DIALOG_DRC_CONTROL_OLD( DRC* aTester, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+    ~DIALOG_DRC_CONTROL_OLD();
 
     /**
      * Enable/disable the report file creation

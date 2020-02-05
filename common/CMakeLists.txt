@@ -172,6 +172,7 @@ set( COMMON_DLG_SRCS
     dialogs/dialog_text_entry_base.cpp
     dialogs/dialog_print_generic.cpp
     dialogs/dialog_print_generic_base.cpp
+    dialogs/dialog_rule_checker_control_base.cpp
     dialogs/dialog_text_entry.cpp
     dialogs/panel_common_settings.cpp
     dialogs/panel_common_settings_base.cpp
@@ -371,6 +372,7 @@ set( COMMON_SRCS
     tool/edit_points.cpp
     tool/grid_menu.cpp
     tool/picker_tool.cpp
+    tool/rule_check_manager.cpp
     tool/selection_conditions.cpp
     tool/tool_action.cpp
     tool/tool_base.cpp
