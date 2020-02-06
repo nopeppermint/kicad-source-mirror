@@ -21,6 +21,12 @@
 #include <dialogs/dialog_rule_checker_control_base.h>
 #include <tool/rule_check_manager.h>
 
+/**
+ * Trace mask for debugging the rule checker system
+ * @ingroup trace_env_vars
+ */
+const wxChar* ruleTrace = wxT( "RULE_CHECK" );
+
 
 RULE_CHECK_MANAGER_BASE::RULE_CHECK_MANAGER_BASE( const std::string& aName ) :
         TOOL_INTERACTIVE( aName ),
@@ -41,4 +47,47 @@ void RULE_CHECK_MANAGER_BASE::ShowControlDialog( wxWindow* aParent )
         createControlDialog( aParent );
 
     m_controlDialog->Show( true );
+}
+
+
+void RULE_CHECK_MANAGER_BASE::DestroyConrolDialog()
+{
+}
+
+
+bool RULE_CHECK_MANAGER_BASE::RunChecks()
+{
+    return false;
+}
+
+
+bool RULE_CHECK_MANAGER_BASE::IsRunning()
+{
+    return false;
+}
+
+
+void RULE_CHECK_MANAGER_BASE::AbortChecks()
+{
+}
+
+
+double RULE_CHECK_MANAGER_BASE::GetProgress()
+{
+    return 1.0;
+}
+
+
+void RULE_CHECK_MANAGER_BASE::ClearViolations()
+{
+}
+
+
+void RULE_CHECK_MANAGER_BASE::Ignore( VIOLATION* aViolation, bool aIgnore )
+{
+}
+
+
+void RULE_CHECK_MANAGER_BASE::Ignore( int aViolationType, bool aIgnore )
+{
 }

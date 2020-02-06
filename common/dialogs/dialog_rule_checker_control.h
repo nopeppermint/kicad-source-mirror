@@ -38,8 +38,22 @@ public:
 
     virtual ~DIALOG_RULE_CHECKER_CONTROL() {}
 
-private:
+protected:
+    virtual void OnReportCheckBoxClicked( wxCommandEvent& event ) override;
 
+    virtual void OnButtonBrowseReportPathClick( wxCommandEvent& event ) override;
+
+    virtual void OnButtonEditDesignRules( wxCommandEvent& event ) override;
+
+    virtual void OnDeleteAllClick( wxCommandEvent& event ) override;
+
+    virtual void OnCloseClick( wxCommandEvent& event ) override;
+
+    virtual void OnStartChecksClick( wxCommandEvent& event ) override;
+
+
+private:
+    /// Handler to the manager that spawned this dialog
     RULE_CHECK_MANAGER_BASE* m_manager;
 };
 

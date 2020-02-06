@@ -111,11 +111,11 @@ DIALOG_RULE_CHECKER_CONTROL_BASE::DIALOG_RULE_CHECKER_CONTROL_BASE( wxWindow* pa
 	this->Connect( wxEVT_ACTIVATE, wxActivateEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnActivateDlg ) );
 	m_CreateRptCtrl->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnReportCheckBoxClicked ), NULL, this );
 	m_RptFilenameCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnReportFilenameEdited ), NULL, this );
-	m_btnBrowseReportPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonBrowseRptFileClick ), NULL, this );
+	m_btnBrowseReportPath->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonBrowseReportPathClick ), NULL, this );
 	m_btnSettings->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonEditDesignRules ), NULL, this );
 	m_btnClearAll->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnDeleteAllClick ), NULL, this );
-	m_sdbSizerCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnCancelClick ), NULL, this );
-	m_sdbSizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnStartdrcClick ), NULL, this );
+	m_sdbSizerCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnCloseClick ), NULL, this );
+	m_sdbSizerOK->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnStartChecksClick ), NULL, this );
 }
 
 DIALOG_RULE_CHECKER_CONTROL_BASE::~DIALOG_RULE_CHECKER_CONTROL_BASE()
@@ -124,10 +124,10 @@ DIALOG_RULE_CHECKER_CONTROL_BASE::~DIALOG_RULE_CHECKER_CONTROL_BASE()
 	this->Disconnect( wxEVT_ACTIVATE, wxActivateEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnActivateDlg ) );
 	m_CreateRptCtrl->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnReportCheckBoxClicked ), NULL, this );
 	m_RptFilenameCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnReportFilenameEdited ), NULL, this );
-	m_btnBrowseReportPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonBrowseRptFileClick ), NULL, this );
+	m_btnBrowseReportPath->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonBrowseReportPathClick ), NULL, this );
 	m_btnSettings->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnButtonEditDesignRules ), NULL, this );
 	m_btnClearAll->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnDeleteAllClick ), NULL, this );
-	m_sdbSizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnCancelClick ), NULL, this );
-	m_sdbSizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnStartdrcClick ), NULL, this );
+	m_sdbSizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnCloseClick ), NULL, this );
+	m_sdbSizerOK->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnStartChecksClick ), NULL, this );
 
 }

@@ -81,6 +81,7 @@ class EDA_ITEM;
 class EDA_DRAW_FRAME;
 class EDA_RECT;
 class MSG_PANEL_ITEM;
+class VIOLATION;
 
 
 /**
@@ -182,6 +183,9 @@ protected:
 
     /// Flag bits for editing and other uses.
     STATUS_FLAGS  m_Flags;
+
+    /// List of rule checker violation pointers (violations owned by a RULE_CHECK_MANAGER)
+    std::vector<VIOLATION*> m_Violations;
 
 private:
 
@@ -538,6 +542,12 @@ public:
      * is used to assign the members of \a aItem to another object.
      */
     EDA_ITEM& operator=( const EDA_ITEM& aItem );
+
+    /// Attaches a new rule checker violation to this item
+    void AddViolation( VIOLATION* aViolation ) { m_Violations.push_back( aViolation ); }
+
+    /// Retrieves the list of rule checker violations attached to this item
+    std::vector<VIOLATION*>& GetViolationsList() { return m_Violations; }
 
     virtual const BOX2I ViewBBox() const override;
 

@@ -62,11 +62,11 @@ class DIALOG_RULE_CHECKER_CONTROL_BASE : public DIALOG_SHIM
 		virtual void OnActivateDlg( wxActivateEvent& event ) { event.Skip(); }
 		virtual void OnReportCheckBoxClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnReportFilenameEdited( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnButtonBrowseRptFileClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnButtonBrowseReportPathClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnButtonEditDesignRules( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDeleteAllClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnCancelClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnStartdrcClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnCloseClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnStartChecksClick( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

@@ -268,7 +268,7 @@
                                 <property name="window_extra_style"></property>
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
-                                <event name="OnButtonClick">OnButtonBrowseRptFileClick</event>
+                                <event name="OnButtonClick">OnButtonBrowseReportPathClick</event>
                             </object>
                         </object>
                     </object>
@@ -535,7 +535,7 @@
                     <property name="border">5</property>
                     <property name="flag">wxALL|wxEXPAND</property>
                     <property name="proportion">0</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">m_sizerButtons</property>
                         <property name="orient">wxHORIZONTAL</property>
@@ -832,8 +832,8 @@
                                 <property name="minimum_size"></property>
                                 <property name="name">m_sdbSizer</property>
                                 <property name="permission">protected</property>
-                                <event name="OnCancelButtonClick">OnCancelClick</event>
-                                <event name="OnOKButtonClick">OnStartdrcClick</event>
+                                <event name="OnCancelButtonClick">OnCloseClick</event>
+                                <event name="OnOKButtonClick">OnStartChecksClick</event>
                             </object>
                         </object>
                     </object>

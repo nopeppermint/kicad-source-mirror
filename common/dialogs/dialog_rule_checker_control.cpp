@@ -29,3 +29,32 @@ DIALOG_RULE_CHECKER_CONTROL::DIALOG_RULE_CHECKER_CONTROL( RULE_CHECK_MANAGER_BAS
         m_manager( aManager )
 {
 }
+
+
+void DIALOG_RULE_CHECKER_CONTROL::OnReportCheckBoxClicked( wxCommandEvent& event )
+{
+}
+
+
+void DIALOG_RULE_CHECKER_CONTROL::OnButtonBrowseReportPathClick( wxCommandEvent& event )
+{
+}
+
+
+void DIALOG_RULE_CHECKER_CONTROL::OnButtonEditDesignRules( wxCommandEvent& event )
+{
+}
+
+
+void DIALOG_RULE_CHECKER_CONTROL::OnDeleteAllClick( wxCommandEvent& event )
+{
+}
+
+
+void DIALOG_RULE_CHECKER_CONTROL::OnCloseClick( wxCommandEvent& event )
+{
+}
+
+void DIALOG_RULE_CHECKER_CONTROL::OnStartChecksClick( wxCommandEvent& event )
+{
+}

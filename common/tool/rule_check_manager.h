@@ -24,6 +24,10 @@
 #include <tool/tool_interactive.h>
 
 class DIALOG_RULE_CHECKER_CONTROL_BASE;
+class VIOLATION;
+
+
+extern const wxChar* ruleTrace;
 
 
 class RULE_CHECK_MANAGER_BASE : public TOOL_INTERACTIVE
@@ -45,22 +49,73 @@ public:
     }
 
     /**
-     * Deletes this ui dialog box and zeros out its pointer to remember
+     * Deletes this control dialog and zeros out its pointer to remember
      * the state of the dialog's existence.
-     *
-     * @param aReason Indication of which button was clicked to cause the destruction.
-     * if aReason == wxID_OK, design parameters values which can be entered from the dialog
-     * will bbe saved in design parameters list
      */
-    void DestroyDRCDialog( int aReason );
+    void DestroyConrolDialog();
+
+    /**
+     * Clears all current violations and starts the rule checker engine
+     * @return true if the engine was started, false otherwise (maybe already running?)
+     */
+    bool RunChecks();
+
+    /**
+     * Checks if a rule checker engine is running in a background thread
+     * @return true if the rule checker engine is currently running (in a background thread)
+     */
+    bool IsRunning();
+
+    /**
+     * Stops a running checker engine.  Has no effect if the engine is not running.
+     */
+    void AbortChecks();
+
+    /**
+     * Retrieves the progress of a running checker engine.
+     * @return a ratio of progress (0.0 - 1.0) if running, or 1.0 if not running
+     */
+    double GetProgress();
+
+    /**
+     * Clears the violations list and cleans up (i.e. removes the links to the EDA_ITEMS referenced
+     * in the violation).  All violation pointers held after this call are invalidated.
+     */
+    void ClearViolations();
+
+    /**
+     * Updates the ignored state of a given violation
+     * @param aViolation is a pointer to a validation to mark as ignored
+     * @param aIgnore chooses whether to set (true) or clear (false) the ignore state
+     */
+    void Ignore( VIOLATION* aViolation, bool aIgnore = true );
+
+    /**
+     * Updates the ignored state of all violations of a given type
+     * @param aViolationType is the type (typically cast fron an enum of derived class)
+     * @param aIgnore chooses whether to set (true) or clear (false) the ignore state
+     */
+    void Ignore( int aViolationType, bool aIgnore = true );
+
+    std::vector<VIOLATION*>& GetViolations() { return m_violations; }
 
 protected:
     DIALOG_RULE_CHECKER_CONTROL_BASE* m_controlDialog;
 
-    ///> Sets up handlers for various events.
+    /// Violations are owned here
+    std::vector<VIOLATION*> m_violations;
+
+    /// Sets up handlers for various events.
     void setTransitions() override {}
 
+    /// Overridden in derived classes to construct an appropriate control dialog
     virtual void createControlDialog( wxWindow* aParent ) = 0;
+
+    /// Can be overridden to add some logic to RunChecks() before the engine starts
+    virtual void onRunChecks() {}
+
+    /// Can be overridden to add some logic after the checker completes (callback)
+    virtual void onChecksCompleted() {}
 };
 
 #endif
