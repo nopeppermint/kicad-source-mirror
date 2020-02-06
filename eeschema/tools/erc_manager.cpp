@@ -18,26 +18,43 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_DRC_CONTROL_H
-#define KICAD_DIALOG_DRC_CONTROL_H
-
-#include <dialogs/dialog_rule_check_control.h>
-
-#define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
-
-class DRC_MANAGER;
-class PCB_EDIT_FRAME;
+#include <advanced_config.h>
+#include <dialogs/dialog_erc_control.h>
+#include <erc/erc_engine.h>
+#include <id.h>
+#include <sch_edit_frame.h>
+#include <tools/ee_actions.h>
+#include <tools/erc_manager.h>
 
 
-class DIALOG_DRC_CONTROL : public DIALOG_RULE_CHECK_CONTROL
+ERC_MANAGER::ERC_MANAGER() : RULE_CHECK_MANAGER_BASE( "eeschema.ERCManager" ),
+        m_schFrame( nullptr )
 {
-public:
-    DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+}
 
-    ~DIALOG_DRC_CONTROL();
 
-private:
-    PCB_EDIT_FRAME* m_editFrame;
-};
+ERC_MANAGER::~ERC_MANAGER()
+{
+    if( m_engine )
+        delete m_engine;
+}
 
-#endif
+
+void ERC_MANAGER::Reset( RESET_REASON aReason )
+{
+    m_schFrame = getEditFrame<SCH_EDIT_FRAME>();
+    m_engine = new ERC_ENGINE;
+}
+
+
+void ERC_MANAGER::createControlDialog( wxWindow* aParent )
+{
+    m_controlDialog = new DIALOG_ERC_CONTROL( this, m_schFrame, ID_DIALOG_ERC );
+}
+
+
+void ERC_MANAGER::setTransitions()
+{
+    if( ADVANCED_CFG::GetCfg().m_newDrc )
+        Go( &ERC_MANAGER::ShowControlDialog,    EE_ACTIONS::runERC.MakeEvent() );
+}

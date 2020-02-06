@@ -21,6 +21,7 @@ endif()
 include_directories( BEFORE ${INC_BEFORE} )
 include_directories(
     ./dialogs
+    ./erc
     ./netlist_exporters
     ./widgets
     ./libedit
@@ -56,6 +57,7 @@ set( EESCHEMA_DLGS
     dialogs/dialog_edit_sheet_pin_base.cpp
     dialogs/dialog_erc.cpp
     dialogs/dialog_erc_base.cpp
+    dialogs/dialog_erc_control.cpp
     dialogs/dialog_global_sym_lib_table_config.cpp
     dialogs/dialog_global_edit_text_and_graphics.cpp
     dialogs/dialog_global_edit_text_and_graphics_base.cpp
@@ -213,6 +215,8 @@ set( EESCHEMA_SRCS
     toolbars_sch_editor.cpp
     transform.cpp
 
+    erc/erc_engine.cpp
+
     netlist_exporters/netlist_exporter.cpp
     netlist_exporters/netlist_exporter_cadstar.cpp
     netlist_exporters/netlist_exporter_generic.cpp
@@ -227,6 +231,7 @@ set( EESCHEMA_SRCS
     tools/ee_point_editor.cpp
     tools/ee_selection.cpp
     tools/ee_selection_tool.cpp
+    tools/erc_manager.cpp
     tools/lib_control.cpp
     tools/lib_drawing_tools.cpp
     tools/lib_edit_tool.cpp

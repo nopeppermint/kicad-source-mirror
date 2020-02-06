@@ -22,6 +22,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
+#include <advanced_config.h>
 #include <view/view_controls.h>
 #include <sch_component.h>
 #include <sch_marker.h>
@@ -45,6 +46,7 @@
 #include <invoke_sch_dialog.h>
 #include <project.h>
 #include <dialogs/dialog_display_info_HTML_base.h>
+#include <dialogs/dialog_erc_control.h>
 #include <math/util.h>      // for KiROUND
 
 
@@ -323,7 +325,9 @@ int EE_INSPECTION_TOOL::UpdateMessagePanel( const TOOL_EVENT& aEvent )
 
 void EE_INSPECTION_TOOL::setTransitions()
 {
-    Go( &EE_INSPECTION_TOOL::RunERC,              EE_ACTIONS::runERC.MakeEvent() );
+    if( !ADVANCED_CFG::GetCfg().m_newDrc )
+        Go( &EE_INSPECTION_TOOL::RunERC,              EE_ACTIONS::runERC.MakeEvent() );
+
     Go( &EE_INSPECTION_TOOL::RunSimulation,       EE_ACTIONS::runSimulation.MakeEvent() );
 
     Go( &EE_INSPECTION_TOOL::ShowDatasheet,       EE_ACTIONS::showDatasheet.MakeEvent() );

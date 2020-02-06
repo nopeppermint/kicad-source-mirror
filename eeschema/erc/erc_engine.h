@@ -18,43 +18,23 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <dialogs/dialog_rule_checker_control.h>
-#include <tool/rule_check_manager.h>
-#include <wx/wx.h>
+#ifndef KICAD_ERC_ENGINE_H
+#define KICAD_ERC_ENGINE_H
+
+#include <rule_check_engine.h>
 
 
-DIALOG_RULE_CHECKER_CONTROL::DIALOG_RULE_CHECKER_CONTROL( RULE_CHECK_MANAGER_BASE* aManager,
-                                                          wxWindow* aParent ) :
-        DIALOG_RULE_CHECKER_CONTROL_BASE( aParent ),
-        m_manager( aManager )
+class ERC_ENGINE : public RULE_CHECK_ENGINE
 {
-}
+public:
+    ERC_ENGINE() : RULE_CHECK_ENGINE() {}
+
+    virtual ~ERC_ENGINE() {}
+
+    virtual bool Start() override;
+
+    virtual double GetProgress() override;
+};
 
 
-void DIALOG_RULE_CHECKER_CONTROL::OnReportCheckBoxClicked( wxCommandEvent& event )
-{
-}
-
-
-void DIALOG_RULE_CHECKER_CONTROL::OnButtonBrowseReportPathClick( wxCommandEvent& event )
-{
-}
-
-
-void DIALOG_RULE_CHECKER_CONTROL::OnButtonEditDesignRules( wxCommandEvent& event )
-{
-}
-
-
-void DIALOG_RULE_CHECKER_CONTROL::OnDeleteAllClick( wxCommandEvent& event )
-{
-}
-
-
-void DIALOG_RULE_CHECKER_CONTROL::OnCloseClick( wxCommandEvent& event )
-{
-}
-
-void DIALOG_RULE_CHECKER_CONTROL::OnStartChecksClick( wxCommandEvent& event )
-{
-}
+#endif

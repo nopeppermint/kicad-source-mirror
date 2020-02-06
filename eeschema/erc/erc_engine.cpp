@@ -18,26 +18,16 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_DRC_CONTROL_H
-#define KICAD_DIALOG_DRC_CONTROL_H
-
-#include <dialogs/dialog_rule_check_control.h>
-
-#define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
-
-class DRC_MANAGER;
-class PCB_EDIT_FRAME;
+#include <erc/erc_engine.h>
 
 
-class DIALOG_DRC_CONTROL : public DIALOG_RULE_CHECK_CONTROL
+bool ERC_ENGINE::Start()
 {
-public:
-    DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+    return true;
+}
 
-    ~DIALOG_DRC_CONTROL();
 
-private:
-    PCB_EDIT_FRAME* m_editFrame;
-};
-
-#endif
+double ERC_ENGINE::GetProgress()
+{
+    return 1.0;
+}

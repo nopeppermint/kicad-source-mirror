@@ -18,26 +18,32 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_DRC_CONTROL_H
-#define KICAD_DIALOG_DRC_CONTROL_H
-
-#include <dialogs/dialog_rule_check_control.h>
-
-#define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
-
-class DRC_MANAGER;
-class PCB_EDIT_FRAME;
+#include <bitmaps.h>
+#include <dialogs/dialog_erc_control.h>
+#include <sch_edit_frame.h>
+#include <tools/erc_manager.h>
 
 
-class DIALOG_DRC_CONTROL : public DIALOG_RULE_CHECK_CONTROL
+DIALOG_ERC_CONTROL::DIALOG_ERC_CONTROL( ERC_MANAGER* aManager, SCH_EDIT_FRAME* aEditorFrame,
+                                        wxWindowID aId ) : DIALOG_RULE_CHECK_CONTROL( aManager, aEditorFrame, aId ), m_editFrame( aEditorFrame )
 {
-public:
-    DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+    SetTitle( _( "ERC Control" ) );
 
-    ~DIALOG_DRC_CONTROL();
+    m_btnBrowseReportPath->SetBitmap( KiBitmap( folder_xpm ) );
 
-private:
-    PCB_EDIT_FRAME* m_editFrame;
-};
+    m_btnSettings->SetLabel( _( "Edit electrical rules..." ) );
 
-#endif
+    // We use a sdbSizer here to get the order right, which is platform-dependent
+    m_sdbSizerOK->SetLabel( _( "Run ERC" ) );
+    m_sdbSizerCancel->SetLabel( _( "Close" ) );
+    m_sizerButtons->Layout();
+
+    m_sdbSizerOK->SetDefault();
+
+    FinishDialogSettings();
+}
+
+
+DIALOG_ERC_CONTROL::~DIALOG_ERC_CONTROL()
+{
+}

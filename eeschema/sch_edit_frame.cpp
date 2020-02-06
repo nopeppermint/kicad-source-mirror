@@ -63,6 +63,7 @@
 #include <tools/ee_inspection_tool.h>
 #include <tools/ee_point_editor.h>
 #include <tools/ee_selection_tool.h>
+#include <tools/erc_manager.h>
 #include <tools/sch_drawing_tools.h>
 #include <tools/sch_edit_tool.h>
 #include <tools/sch_editor_control.h>
@@ -358,6 +359,7 @@ void SCH_EDIT_FRAME::setupTools()
     m_toolManager->RegisterTool( new EE_INSPECTION_TOOL );
     m_toolManager->RegisterTool( new SCH_EDITOR_CONTROL );
     m_toolManager->RegisterTool( new EE_POINT_EDITOR );
+    m_toolManager->RegisterTool( new ERC_MANAGER );
     m_toolManager->InitTools();
 
     // Run the selection tool, it is supposed to be always active

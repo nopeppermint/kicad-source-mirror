@@ -25,8 +25,7 @@
 #include <tools/drc_manager.h>
 
 
-DRC_MANAGER::DRC_MANAGER() :
-        RULE_CHECK_MANAGER_BASE( "pcbnew.DRCManager" ),
+DRC_MANAGER::DRC_MANAGER() : RULE_CHECK_MANAGER_BASE( "pcbnew.DRCManager" ),
         m_pcbFrame( nullptr )
 {
 }

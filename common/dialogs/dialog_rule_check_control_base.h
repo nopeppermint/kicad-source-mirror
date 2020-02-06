@@ -35,9 +35,9 @@
 #define ID_BUTTON_BROWSE_RPT_FILE 1001
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class DIALOG_RULE_CHECKER_CONTROL_BASE
+/// Class DIALOG_RULE_CHECK_CONTROL_BASE
 ///////////////////////////////////////////////////////////////////////////////
-class DIALOG_RULE_CHECKER_CONTROL_BASE : public DIALOG_SHIM
+class DIALOG_RULE_CHECK_CONTROL_BASE : public DIALOG_SHIM
 {
 	private:
 
@@ -71,8 +71,8 @@ class DIALOG_RULE_CHECKER_CONTROL_BASE : public DIALOG_SHIM
 
 	public:
 
-		DIALOG_RULE_CHECKER_CONTROL_BASE( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("%s Control"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
-		~DIALOG_RULE_CHECKER_CONTROL_BASE();
+		DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("%s Control"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		~DIALOG_RULE_CHECK_CONTROL_BASE();
 
 };
 

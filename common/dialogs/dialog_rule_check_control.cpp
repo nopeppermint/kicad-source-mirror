@@ -20,68 +20,42 @@
 
 #include <dialogs/dialog_rule_check_control.h>
 #include <tool/rule_check_manager.h>
-
-/**
- * Trace mask for debugging the rule checker system
- * @ingroup trace_env_vars
- */
-const wxChar* ruleTrace = wxT( "RULE_CHECK" );
+#include <wx/wx.h>
 
 
-RULE_CHECK_MANAGER_BASE::RULE_CHECK_MANAGER_BASE( const std::string& aName ) :
-        TOOL_INTERACTIVE( aName ),
-        m_controlDialog(), m_engine()
+DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* aManager,
+                                                      wxWindow* aParent, wxWindowID aId ) :
+        DIALOG_RULE_CHECK_CONTROL_BASE( aParent, aId ),
+        m_manager( aManager )
 {
 }
 
 
-void RULE_CHECK_MANAGER_BASE::ShowControlDialog( wxWindow* aParent )
-{
-    if( !m_controlDialog )
-        createControlDialog( aParent );
-
-    m_controlDialog->Show( true );
-}
-
-
-void RULE_CHECK_MANAGER_BASE::DestroyControlDialog()
+void DIALOG_RULE_CHECK_CONTROL::OnReportCheckBoxClicked( wxCommandEvent& event )
 {
 }
 
 
-bool RULE_CHECK_MANAGER_BASE::RunChecks()
-{
-    return false;
-}
-
-
-bool RULE_CHECK_MANAGER_BASE::IsRunning()
-{
-    return false;
-}
-
-
-void RULE_CHECK_MANAGER_BASE::AbortChecks()
+void DIALOG_RULE_CHECK_CONTROL::OnButtonBrowseReportPathClick( wxCommandEvent& event )
 {
 }
 
 
-double RULE_CHECK_MANAGER_BASE::GetProgress()
-{
-    return 1.0;
-}
-
-
-void RULE_CHECK_MANAGER_BASE::ClearViolations()
+void DIALOG_RULE_CHECK_CONTROL::OnButtonEditDesignRules( wxCommandEvent& event )
 {
 }
 
 
-void RULE_CHECK_MANAGER_BASE::Ignore( VIOLATION* aViolation, bool aIgnore )
+void DIALOG_RULE_CHECK_CONTROL::OnDeleteAllClick( wxCommandEvent& event )
 {
 }
 
 
-void RULE_CHECK_MANAGER_BASE::Ignore( int aViolationType, bool aIgnore )
+void DIALOG_RULE_CHECK_CONTROL::OnCloseClick( wxCommandEvent& event )
+{
+}
+
+
+void DIALOG_RULE_CHECK_CONTROL::OnStartChecksClick( wxCommandEvent& event )
 {
 }

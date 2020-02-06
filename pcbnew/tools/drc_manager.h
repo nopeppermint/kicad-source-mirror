@@ -45,5 +45,4 @@ private:
     PCB_EDIT_FRAME* m_pcbFrame;
 };
 
-
 #endif

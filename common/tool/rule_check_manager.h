@@ -23,7 +23,8 @@
 
 #include <tool/tool_interactive.h>
 
-class DIALOG_RULE_CHECKER_CONTROL_BASE;
+class DIALOG_RULE_CHECK_CONTROL;
+class RULE_CHECK_ENGINE;
 class VIOLATION;
 
 
@@ -37,9 +38,6 @@ public:
 
     virtual ~RULE_CHECK_MANAGER_BASE() {}
 
-    /// @copydoc TOOL_INTERACTIVE::Reset()
-    void Reset( RESET_REASON aReason ) override;
-
     void ShowControlDialog( wxWindow* aParent );
 
     int ShowControlDialog( const TOOL_EVENT& aEvent )
@@ -52,7 +50,7 @@ public:
      * Deletes this control dialog and zeros out its pointer to remember
      * the state of the dialog's existence.
      */
-    void DestroyConrolDialog();
+    void DestroyControlDialog();
 
     /**
      * Clears all current violations and starts the rule checker engine
@@ -100,7 +98,9 @@ public:
     std::vector<VIOLATION*>& GetViolations() { return m_violations; }
 
 protected:
-    DIALOG_RULE_CHECKER_CONTROL_BASE* m_controlDialog;
+    DIALOG_RULE_CHECK_CONTROL* m_controlDialog;
+
+    RULE_CHECK_ENGINE* m_engine;
 
     /// Violations are owned here
     std::vector<VIOLATION*> m_violations;

@@ -18,10 +18,10 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_RULE_CHECKER_CONTROL_H
-#define KICAD_DIALOG_RULE_CHECKER_CONTROL_H
+#ifndef KICAD_DIALOG_RULE_CHECK_CONTROL_H
+#define KICAD_DIALOG_RULE_CHECK_CONTROL_H
 
-#include <dialogs/dialog_rule_checker_control_base.h>
+#include <dialogs/dialog_rule_check_control_base.h>
 
 class RULE_CHECK_MANAGER_BASE;
 class wxWindow;
@@ -31,12 +31,14 @@ class wxWindow;
  * This dialog is the generic rule checker (DRC/ERC) control UI.
  * It is derived in PcbNew and Eeschema to add some specific functionality.
  */
-class DIALOG_RULE_CHECKER_CONTROL : public DIALOG_RULE_CHECKER_CONTROL_BASE
+class DIALOG_RULE_CHECK_CONTROL : public DIALOG_RULE_CHECK_CONTROL_BASE
 {
 public:
-    DIALOG_RULE_CHECKER_CONTROL( RULE_CHECK_MANAGER_BASE* aManager, wxWindow* aParent );
+    DIALOG_RULE_CHECK_CONTROL(
+            RULE_CHECK_MANAGER_BASE* aManager, wxWindow* aParent,
+                                 wxWindowID aId = wxID_ANY );
 
-    virtual ~DIALOG_RULE_CHECKER_CONTROL() {}
+    virtual ~DIALOG_RULE_CHECK_CONTROL() {}
 
 protected:
     virtual void OnReportCheckBoxClicked( wxCommandEvent& event ) override;

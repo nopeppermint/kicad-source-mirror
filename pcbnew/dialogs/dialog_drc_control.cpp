@@ -25,8 +25,7 @@
 
 
 DIALOG_DRC_CONTROL::DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame,
-                                        wxWindow* aParent ) :
-        DIALOG_RULE_CHECKER_CONTROL( aManager, aParent ), m_editFrame( aEditorFrame )
+                                        wxWindow* aParent ) : DIALOG_RULE_CHECK_CONTROL( aManager, aParent ), m_editFrame( aEditorFrame )
 {
     SetName( DIALOG_DRC_WINDOW_NAME );
     SetTitle( _( "DRC Control" ) );
@@ -45,5 +44,4 @@ DIALOG_DRC_CONTROL::DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* a
 
 DIALOG_DRC_CONTROL::~DIALOG_DRC_CONTROL()
 {
-
 }

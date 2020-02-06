@@ -18,26 +18,24 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_DRC_CONTROL_H
-#define KICAD_DIALOG_DRC_CONTROL_H
+#ifndef KICAD_DIALOG_ERC_CONTROL_H
+#define KICAD_DIALOG_ERC_CONTROL_H
 
 #include <dialogs/dialog_rule_check_control.h>
 
-#define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
-
-class DRC_MANAGER;
-class PCB_EDIT_FRAME;
+class ERC_MANAGER;
+class SCH_EDIT_FRAME;
 
 
-class DIALOG_DRC_CONTROL : public DIALOG_RULE_CHECK_CONTROL
+class DIALOG_ERC_CONTROL : public DIALOG_RULE_CHECK_CONTROL
 {
 public:
-    DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+    DIALOG_ERC_CONTROL( ERC_MANAGER* aManager, SCH_EDIT_FRAME* aEditorFrame, wxWindowID aId );
 
-    ~DIALOG_DRC_CONTROL();
+    ~DIALOG_ERC_CONTROL();
 
 private:
-    PCB_EDIT_FRAME* m_editFrame;
+    SCH_EDIT_FRAME* m_editFrame;
 };
 
 #endif
