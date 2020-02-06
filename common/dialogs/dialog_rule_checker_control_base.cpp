@@ -50,7 +50,7 @@ DIALOG_RULE_CHECKER_CONTROL_BASE::DIALOG_RULE_CHECKER_CONTROL_BASE( wxWindow* pa
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_progressBar = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL );
+	m_progressBar = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
 	m_progressBar->SetValue( 0 );
 	bSizer8->Add( m_progressBar, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5 );
 
@@ -63,7 +63,7 @@ DIALOG_RULE_CHECKER_CONTROL_BASE::DIALOG_RULE_CHECKER_CONTROL_BASE( wxWindow* pa
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 
-	m_dataView = new wxDataViewTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_dataView = new wxDataViewTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,300 ), 0 );
 	m_dataView->SetMinSize( wxSize( -1,100 ) );
 
 	bSizer9->Add( m_dataView, 1, wxALL|wxEXPAND, 5 );
@@ -106,7 +106,6 @@ DIALOG_RULE_CHECKER_CONTROL_BASE::DIALOG_RULE_CHECKER_CONTROL_BASE( wxWindow* pa
 
 	this->SetSizer( m_MainSizer );
 	this->Layout();
-	m_MainSizer->Fit( this );
 
 	// Connect Events
 	this->Connect( wxEVT_ACTIVATE, wxActivateEventHandler( DIALOG_RULE_CHECKER_CONTROL_BASE::OnActivateDlg ) );

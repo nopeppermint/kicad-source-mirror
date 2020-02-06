@@ -18,26 +18,30 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_DIALOG_DRC_CONTROL_H
-#define KICAD_DIALOG_DRC_CONTROL_H
+#ifndef KICAD_DIALOG_RULE_CHECKER_CONTROL_H
+#define KICAD_DIALOG_RULE_CHECKER_CONTROL_H
 
-#include <dialogs/dialog_rule_checker_control.h>
+#include <dialogs/dialog_rule_checker_control_base.h>
 
-#define DIALOG_DRC_WINDOW_NAME "DialogDrcWindowName"
-
-class DRC_MANAGER;
-class PCB_EDIT_FRAME;
+class RULE_CHECK_MANAGER_BASE;
+class wxWindow;
 
 
-class DIALOG_DRC_CONTROL : public DIALOG_RULE_CHECKER_CONTROL
+/**
+ * This dialog is the generic rule checker (DRC/ERC) control UI.
+ * It is derived in PcbNew and Eeschema to add some specific functionality.
+ */
+class DIALOG_RULE_CHECKER_CONTROL : public DIALOG_RULE_CHECKER_CONTROL_BASE
 {
 public:
-    DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame, wxWindow* aParent );
+    DIALOG_RULE_CHECKER_CONTROL( RULE_CHECK_MANAGER_BASE* aManager, wxWindow* aParent );
 
-    ~DIALOG_DRC_CONTROL();
+    virtual ~DIALOG_RULE_CHECKER_CONTROL() {}
 
 private:
-    PCB_EDIT_FRAME* m_editFrame;
+
+    RULE_CHECK_MANAGER_BASE* m_manager;
 };
+
 
 #endif

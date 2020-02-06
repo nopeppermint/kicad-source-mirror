@@ -172,6 +172,7 @@ set( COMMON_DLG_SRCS
     dialogs/dialog_text_entry_base.cpp
     dialogs/dialog_print_generic.cpp
     dialogs/dialog_print_generic_base.cpp
+    dialogs/dialog_rule_checker_control.cpp
     dialogs/dialog_rule_checker_control_base.cpp
     dialogs/dialog_text_entry.cpp
     dialogs/panel_common_settings.cpp

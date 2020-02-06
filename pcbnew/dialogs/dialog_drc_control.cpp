@@ -21,14 +21,14 @@
 #include <bitmaps.h>
 #include <dialogs/dialog_drc_control.h>
 #include <pcb_edit_frame.h>
-#include <tools/drc.h>
+#include <tools/drc_manager.h>
 
 
 DIALOG_DRC_CONTROL::DIALOG_DRC_CONTROL( DRC_MANAGER* aManager, PCB_EDIT_FRAME* aEditorFrame,
                                         wxWindow* aParent ) :
-        DIALOG_RULE_CHECKER_CONTROL_BASE( aParent ),
-        m_drcManager( aManager ), m_editFrame( aEditorFrame )
+        DIALOG_RULE_CHECKER_CONTROL( aManager, aParent ), m_editFrame( aEditorFrame )
 {
+    SetName( DIALOG_DRC_WINDOW_NAME );
     SetTitle( _( "DRC Control" ) );
 
     m_btnBrowseReportPath->SetBitmap( KiBitmap( folder_xpm ) );
