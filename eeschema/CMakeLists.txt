@@ -216,6 +216,7 @@ set( EESCHEMA_SRCS
     transform.cpp
 
     erc/erc_engine.cpp
+    erc/erc_violation.cpp
 
     netlist_exporters/netlist_exporter.cpp
     netlist_exporters/netlist_exporter_cadstar.cpp

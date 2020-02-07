@@ -18,8 +18,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KICAD_PCB_VIOLATION_H
-#define KICAD_PCB_VIOLATION_H
+#ifndef KICAD_DRC_VIOLATION_H
+#define KICAD_DRC_VIOLATION_H
 
 #include <violation_base.h>
 
@@ -28,7 +28,7 @@
  * Defines the basic types of DRC violations.  This is mostly used for grouping violations into
  * categories in the UI, and allowing users to quickly ignore/skip entire classes of violation.
  */
-enum class PCB_VIOLATION_TYPE
+enum class DRC_VIOLATION_TYPE
 {
     BOARD_EDGE,     ///< An item crosses or is outside the board edge
     CLEARANCE,      ///< A violation of any clearance rule
@@ -46,23 +46,23 @@ enum class PCB_VIOLATION_TYPE
 };
 
 
-class PCB_VIOLATION : public VIOLATION
+class DRC_VIOLATION : public VIOLATION
 {
 public:
-    PCB_VIOLATION( PCB_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
+    DRC_VIOLATION( DRC_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
                    EDA_ITEM* aSecondItem, VECTOR2I aFirstPosition, VECTOR2I aSecondPosition ) :
             VIOLATION( static_cast<int>( aType ), aUnits, aFirstItem, aFirstPosition,
                        aSecondItem, aSecondPosition )
     {}
 
-    PCB_VIOLATION( PCB_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
+    DRC_VIOLATION( DRC_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
                    VECTOR2I aFirstPosition ) :
             VIOLATION( static_cast<int>( aType ), aUnits, aFirstItem, aFirstPosition )
     {}
 
-    virtual ~PCB_VIOLATION() {}
+    virtual ~DRC_VIOLATION() {}
 
-    static std::string GetTypeAsString( PCB_VIOLATION_TYPE aType );
+    static std::string GetTypeAsString( DRC_VIOLATION_TYPE aType );
 };
 
 #endif

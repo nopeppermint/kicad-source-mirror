@@ -229,7 +229,7 @@ set( PCBNEW_DRC_SRCS
     drc/courtyard_overlap.cpp
     drc/drc_marker_factory.cpp
     drc/drc_provider.cpp
-    drc/pcb_violation.cpp
+        drc/drc_violation.cpp
     )
 
 set( PCBNEW_NETLIST_SRCS
