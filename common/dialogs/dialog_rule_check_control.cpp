@@ -18,9 +18,13 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <bitmaps.h>
 #include <dialogs/dialog_rule_check_control.h>
+#include <rule_check_engine.h>
 #include <tool/rule_check_manager.h>
 #include <wx/wx.h>
+
+using std::placeholders::_1;
 
 
 DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* aManager,
@@ -28,6 +32,23 @@ DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* a
         DIALOG_RULE_CHECK_CONTROL_BASE( aParent, aId ),
         m_manager( aManager )
 {
+    m_btnBrowseReportPath->SetBitmap( KiBitmap( folder_xpm ) );
+
+    m_manager->GetEngine()->SetCallbacks(
+            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineFinished, this, _1 ),
+            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineProgress, this, _1 ) );
+}
+
+
+bool DIALOG_RULE_CHECK_CONTROL::TransferDataToWindow()
+{
+    return true;
+}
+
+
+bool DIALOG_RULE_CHECK_CONTROL::TransferDataFromWindow()
+{
+    return true;
 }
 
 
@@ -53,9 +74,25 @@ void DIALOG_RULE_CHECK_CONTROL::OnDeleteAllClick( wxCommandEvent& event )
 
 void DIALOG_RULE_CHECK_CONTROL::OnCloseClick( wxCommandEvent& event )
 {
+    event.Skip();
 }
 
 
 void DIALOG_RULE_CHECK_CONTROL::OnStartChecksClick( wxCommandEvent& event )
 {
+    m_sdbSizerOK->Disable();
+    m_manager->RunChecks();
+}
+
+
+void DIALOG_RULE_CHECK_CONTROL::onEngineFinished( bool aChecksPassed )
+{
+    m_progressBar->SetValue( 100 );
+    m_sdbSizerOK->Enable();
+}
+
+
+void DIALOG_RULE_CHECK_CONTROL::onEngineProgress( double aProgress )
+{
+    m_progressBar->SetValue( 100 * aProgress );
 }

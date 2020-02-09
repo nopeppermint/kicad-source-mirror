@@ -40,7 +40,7 @@ DIALOG_RULE_CHECK_CONTROL_BASE::DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent
 	wxBoxSizer* bSizer11;
 	bSizer11 = new wxBoxSizer( wxVERTICAL );
 
-	m_txtStatus = new wxStaticText( this, wxID_ANY, _("Reticulating splines..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_txtStatus = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_txtStatus->Wrap( -1 );
 	bSizer11->Add( m_txtStatus, 0, wxLEFT|wxRIGHT|wxTOP, 5 );
 

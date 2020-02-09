@@ -325,7 +325,7 @@ int EE_INSPECTION_TOOL::UpdateMessagePanel( const TOOL_EVENT& aEvent )
 
 void EE_INSPECTION_TOOL::setTransitions()
 {
-    if( !ADVANCED_CFG::GetCfg().m_newDrc )
+    if( !ADVANCED_CFG::GetCfg().m_newErc )
         Go( &EE_INSPECTION_TOOL::RunERC,              EE_ACTIONS::runERC.MakeEvent() );
 
     Go( &EE_INSPECTION_TOOL::RunSimulation,       EE_ACTIONS::runSimulation.MakeEvent() );

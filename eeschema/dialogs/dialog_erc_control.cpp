@@ -18,7 +18,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <bitmaps.h>
 #include <dialogs/dialog_erc_control.h>
 #include <sch_edit_frame.h>
 #include <tools/erc_manager.h>
@@ -28,8 +27,6 @@ DIALOG_ERC_CONTROL::DIALOG_ERC_CONTROL( ERC_MANAGER* aManager, SCH_EDIT_FRAME* a
                                         wxWindowID aId ) : DIALOG_RULE_CHECK_CONTROL( aManager, aEditorFrame, aId ), m_editFrame( aEditorFrame )
 {
     SetTitle( _( "ERC Control" ) );
-
-    m_btnBrowseReportPath->SetBitmap( KiBitmap( folder_xpm ) );
 
     m_btnSettings->SetLabel( _( "Edit electrical rules..." ) );
 

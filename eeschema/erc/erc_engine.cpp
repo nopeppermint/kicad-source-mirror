@@ -23,6 +23,9 @@
 
 bool ERC_ENGINE::Start()
 {
+    if( m_finishedCallback )
+        m_finishedCallback( true );
+
     return true;
 }
 

@@ -91,6 +91,11 @@ static const wxChar CoroutineStackSize[] = wxT( "CoroutineStackSize" );
  */
 static const wxChar NewDRC[] = wxT( "NewDRC" );
 
+/**
+ * Enable the experimental new ERC system
+ */
+static const wxChar NewERC[] = wxT( "NewERC" );
+
 } // namespace KEYS
 
 
@@ -173,6 +178,7 @@ ADVANCED_CFG::ADVANCED_CFG()
     m_realTimeConnectivity = true;
     m_coroutineStackSize   = AC_STACK::default_stack;
     m_newDrc               = false;
+    m_newErc               = false;
 
     loadFromConfigFile();
 }
@@ -220,6 +226,8 @@ void ADVANCED_CFG::loadSettings( wxConfigBase& aCfg )
                                                AC_STACK::min_stack, AC_STACK::max_stack ) );
 
     configParams.push_back( new PARAM_CFG_BOOL( true, AC_KEYS::NewDRC, &m_newDrc, false ) );
+
+    configParams.push_back( new PARAM_CFG_BOOL( true, AC_KEYS::NewERC, &m_newErc, false ) );
 
     wxConfigLoadSetups( &aCfg, configParams );
 

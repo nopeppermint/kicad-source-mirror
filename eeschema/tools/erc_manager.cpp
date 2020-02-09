@@ -55,6 +55,6 @@ void ERC_MANAGER::createControlDialog( wxWindow* aParent )
 
 void ERC_MANAGER::setTransitions()
 {
-    if( ADVANCED_CFG::GetCfg().m_newDrc )
+    if( ADVANCED_CFG::GetCfg().m_newErc )
         Go( &ERC_MANAGER::ShowControlDialog,    EE_ACTIONS::runERC.MakeEvent() );
 }

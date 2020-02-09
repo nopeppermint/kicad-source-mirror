@@ -19,6 +19,7 @@
  */
 
 #include <dialogs/dialog_rule_check_control.h>
+#include <rule_check_engine.h>
 #include <tool/rule_check_manager.h>
 
 /**
@@ -51,7 +52,7 @@ void RULE_CHECK_MANAGER_BASE::DestroyControlDialog()
 
 bool RULE_CHECK_MANAGER_BASE::RunChecks()
 {
-    return false;
+    return m_engine->Start();
 }
 
 

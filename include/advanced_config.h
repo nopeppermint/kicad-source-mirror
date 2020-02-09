@@ -93,6 +93,11 @@ public:
      */
     bool m_newDrc;
 
+    /**
+     * Enable experimental new ERC system
+     */
+    bool m_newErc;
+
 private:
     ADVANCED_CFG();
 

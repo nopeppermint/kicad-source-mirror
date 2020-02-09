@@ -46,13 +46,13 @@ public:
     VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, VECTOR2I aFirstPosition,
                EDA_ITEM* aSecondItem, VECTOR2I aSecondPosition ) :
             m_type( aType ), m_units( aUnits ), m_firstItem( aFirstItem ),
-            m_firstPosition( aFirstPosition ), m_secondItem( aSecondItem ),
+            m_secondItem( aSecondItem ), m_firstPosition( aFirstPosition ),
             m_secondPosition( aSecondPosition )
     {}
 
     VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, VECTOR2I aFirstPosition ) :
             m_type( aType ), m_units( aUnits ), m_firstItem( aFirstItem ),
-            m_firstPosition( aFirstPosition ), m_secondItem( nullptr ), m_secondPosition()
+            m_secondItem( nullptr ), m_firstPosition( aFirstPosition ), m_secondPosition()
     {}
 
     virtual ~VIOLATION() {}

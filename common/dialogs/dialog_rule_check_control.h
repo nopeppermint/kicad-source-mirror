@@ -40,6 +40,10 @@ public:
 
     virtual ~DIALOG_RULE_CHECK_CONTROL() {}
 
+    bool TransferDataToWindow() override;
+
+    bool TransferDataFromWindow() override;
+
 protected:
     virtual void OnReportCheckBoxClicked( wxCommandEvent& event ) override;
 
@@ -52,6 +56,10 @@ protected:
     virtual void OnCloseClick( wxCommandEvent& event ) override;
 
     virtual void OnStartChecksClick( wxCommandEvent& event ) override;
+
+    virtual void onEngineFinished( bool aChecksPassed );
+
+    virtual void onEngineProgress( double aProgress );
 
 
 private:

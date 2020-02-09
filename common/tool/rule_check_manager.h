@@ -38,6 +38,8 @@ public:
 
     virtual ~RULE_CHECK_MANAGER_BASE() {}
 
+    RULE_CHECK_ENGINE* GetEngine() { return m_engine; }
+
     void ShowControlDialog( wxWindow* aParent );
 
     int ShowControlDialog( const TOOL_EVENT& aEvent )
