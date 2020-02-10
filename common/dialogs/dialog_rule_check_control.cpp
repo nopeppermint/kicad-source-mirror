@@ -24,7 +24,7 @@
 #include <tool/rule_check_manager.h>
 #include <wx/wx.h>
 
-using std::placeholders::_1;
+using namespace std::placeholders;
 
 
 DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* aManager,
@@ -36,7 +36,7 @@ DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* a
 
     m_manager->GetEngine()->SetCallbacks(
             std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineFinished, this, _1 ),
-            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineProgress, this, _1 ) );
+            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineProgress, this, _1, _2 ) );
 }
 
 
@@ -69,6 +69,7 @@ void DIALOG_RULE_CHECK_CONTROL::OnButtonEditDesignRules( wxCommandEvent& event )
 
 void DIALOG_RULE_CHECK_CONTROL::OnDeleteAllClick( wxCommandEvent& event )
 {
+    m_manager->ClearViolations();
 }
 
 
@@ -81,6 +82,9 @@ void DIALOG_RULE_CHECK_CONTROL::OnCloseClick( wxCommandEvent& event )
 void DIALOG_RULE_CHECK_CONTROL::OnStartChecksClick( wxCommandEvent& event )
 {
     m_sdbSizerOK->Disable();
+    m_progressBar->SetValue( 0 );
+    m_progressBar->Show();
+
     m_manager->RunChecks();
 }
 
@@ -88,11 +92,14 @@ void DIALOG_RULE_CHECK_CONTROL::OnStartChecksClick( wxCommandEvent& event )
 void DIALOG_RULE_CHECK_CONTROL::onEngineFinished( bool aChecksPassed )
 {
     m_progressBar->SetValue( 100 );
+    m_progressBar->Hide();
+    m_txtStatus->SetLabel( wxEmptyString );
     m_sdbSizerOK->Enable();
 }
 
 
-void DIALOG_RULE_CHECK_CONTROL::onEngineProgress( double aProgress )
+void DIALOG_RULE_CHECK_CONTROL::onEngineProgress( double aProgress, wxString aStatusMessage )
 {
     m_progressBar->SetValue( 100 * aProgress );
+    m_txtStatus->SetLabel( aStatusMessage );
 }

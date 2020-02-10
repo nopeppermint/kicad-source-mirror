@@ -262,6 +262,11 @@ public:
 
     const NET_MAP& GetNetMap() const { return m_net_code_to_subgraphs_map; }
 
+    const std::vector<CONNECTION_SUBGRAPH*>& GetSubgraphs()
+    {
+        return m_subgraphs;
+    }
+
     // TODO(JE) Remove this when pressure valve is removed
     static bool m_allowRealTime;
 

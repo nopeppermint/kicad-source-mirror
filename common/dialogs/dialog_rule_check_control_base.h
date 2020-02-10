@@ -71,7 +71,7 @@ class DIALOG_RULE_CHECK_CONTROL_BASE : public DIALOG_SHIM
 
 	public:
 
-		DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("%s Control"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 640,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+		DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("%s Control"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 		~DIALOG_RULE_CHECK_CONTROL_BASE();
 
 };

@@ -546,8 +546,10 @@ public:
     /// Attaches a new rule checker violation to this item
     void AddViolation( VIOLATION* aViolation ) { m_Violations.push_back( aViolation ); }
 
+    void ClearViolations() { m_Violations.clear(); }
+
     /// Retrieves the list of rule checker violations attached to this item
-    std::vector<VIOLATION*>& GetViolationsList() { return m_Violations; }
+    const std::vector<VIOLATION*>& GetViolationsList() const { return m_Violations; }
 
     virtual const BOX2I ViewBBox() const override;
 

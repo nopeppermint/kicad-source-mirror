@@ -25,18 +25,19 @@
 
 
 /**
- * Defines the basic types of ERC violations.  This is mostly used for grouping violations into
- * categories in the UI, and allowing users to quickly ignore/skip entire classes of violation.
+ * Defines the types of ERC violations, each of which is a subclass of ERC_VIOLATION
  */
 enum class ERC_VIOLATION_TYPE
 {
-    BUS,            ///< Issues related to buses
+    BUS_NET_CONFLICT,    ///< A bus and net are graphically connected but don't match each other
+#if 0
     CONNECTION,     ///< Issues relating to connectivity issues other than pin-to-pin
     DANGLING,       ///< Single-pin net, wire to nowhere, etc
     LABEL,          ///< Issues relating to local, global, and hierarchical labels
     PIN,            ///< Issues relating to pin types (i.e. no driver, etc)
     SHEET,          ///< Issues relating to hierarchical sheets
     SYMBOL,         ///< Issues relating to schematic symbols
+#endif
 };
 
 
@@ -44,19 +45,59 @@ class ERC_VIOLATION : public VIOLATION
 {
 public:
     ERC_VIOLATION( ERC_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
-                   EDA_ITEM* aSecondItem, VECTOR2I aFirstPosition, VECTOR2I aSecondPosition ) :
+            const VECTOR2I& aFirstPosition, EDA_ITEM* aSecondItem, const VECTOR2I& aSecondPosition,
+            const wxString& aDescription, const wxString& aHelp = wxEmptyString ) :
             VIOLATION( static_cast<int>( aType ), aUnits, aFirstItem, aFirstPosition,
-                       aSecondItem, aSecondPosition )
+                       aSecondItem, aSecondPosition ), m_description( aDescription ),
+                       m_helpText( aHelp )
     {}
 
     ERC_VIOLATION( ERC_VIOLATION_TYPE aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
-                   VECTOR2I aFirstPosition ) :
-            VIOLATION( static_cast<int>( aType ), aUnits, aFirstItem, aFirstPosition )
+            const VECTOR2I& aFirstPosition, const wxString& aDescription,
+            const wxString& aHelp = wxEmptyString ) :
+            VIOLATION( static_cast<int>( aType ), aUnits, aFirstItem, aFirstPosition ),
+                    m_description( aDescription ), m_helpText( aHelp )
     {}
 
     virtual ~ERC_VIOLATION() {}
 
-    static std::string GetTypeAsString( ERC_VIOLATION_TYPE aType );
+    wxString GetTitle() override
+    {
+        return GetTypeAsString( static_cast<ERC_VIOLATION_TYPE>( m_type ) );
+    }
+
+    static wxString GetTypeAsString( ERC_VIOLATION_TYPE aType );
+
+    wxString GetDescription() override
+    {
+        return m_description;
+    }
+
+    wxString GetHelpText() override
+    {
+        return m_helpText;
+    }
+
+private:
+
+    wxString m_description;
+
+    wxString m_helpText;
+};
+
+
+class BUS_NET_CONFLICT_VIOLATION : public ERC_VIOLATION
+{
+public:
+    BUS_NET_CONFLICT_VIOLATION( EDA_UNITS aUnits, EDA_ITEM* aFirstItem,
+            const VECTOR2I& aFirstPosition, EDA_ITEM* aSecondItem, const VECTOR2I& aSecondPosition,
+            const wxString& aDescription, const wxString& aHelpText = wxEmptyString ) :
+            ERC_VIOLATION( ERC_VIOLATION_TYPE::BUS_NET_CONFLICT, aUnits, aFirstItem, aFirstPosition,
+                    aSecondItem, aSecondPosition, aDescription, aHelpText )
+    {}
+
+    virtual ~BUS_NET_CONFLICT_VIOLATION() = default;
+
 };
 
 #endif

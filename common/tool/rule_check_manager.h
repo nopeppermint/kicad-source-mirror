@@ -38,8 +38,6 @@ public:
 
     virtual ~RULE_CHECK_MANAGER_BASE() {}
 
-    RULE_CHECK_ENGINE* GetEngine() { return m_engine; }
-
     void ShowControlDialog( wxWindow* aParent );
 
     int ShowControlDialog( const TOOL_EVENT& aEvent )
@@ -58,7 +56,7 @@ public:
      * Clears all current violations and starts the rule checker engine
      * @return true if the engine was started, false otherwise (maybe already running?)
      */
-    bool RunChecks();
+    virtual bool RunChecks();
 
     /**
      * Checks if a rule checker engine is running in a background thread
@@ -81,7 +79,7 @@ public:
      * Clears the violations list and cleans up (i.e. removes the links to the EDA_ITEMS referenced
      * in the violation).  All violation pointers held after this call are invalidated.
      */
-    void ClearViolations();
+    virtual void ClearViolations();
 
     /**
      * Updates the ignored state of a given violation
@@ -97,7 +95,16 @@ public:
      */
     void Ignore( int aViolationType, bool aIgnore = true );
 
-    std::vector<VIOLATION*>& GetViolations() { return m_violations; }
+    std::vector<VIOLATION*>& GetViolations()
+    {
+        return m_violations;
+    }
+
+    template <typename EngineType = RULE_CHECK_ENGINE>
+    EngineType* GetEngine()
+    {
+        return static_cast<EngineType*>( m_engine );
+    }
 
 protected:
     DIALOG_RULE_CHECK_CONTROL* m_controlDialog;

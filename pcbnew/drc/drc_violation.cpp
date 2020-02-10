@@ -52,7 +52,7 @@ std::string DRC_VIOLATION::GetTypeAsString( DRC_VIOLATION_TYPE aType )
     case DRC_VIOLATION_TYPE::PADSTACK:
         return _( "Hole/via violations" ).ToStdString();
 
-    case DRC_VIOLATION_TYPE::SHORT:
+    case DRC_VIOLATION_TYPE::SHORT_CIRCUIT:
         return _( "Short circuit violations" ).ToStdString();
 
     case DRC_VIOLATION_TYPE::TRACK:

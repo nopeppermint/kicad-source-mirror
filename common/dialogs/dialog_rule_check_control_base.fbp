@@ -45,7 +45,7 @@
             <property name="minimum_size"></property>
             <property name="name">DIALOG_RULE_CHECK_CONTROL_BASE</property>
             <property name="pos"></property>
-            <property name="size">640,-1</property>
+            <property name="size">-1,-1</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER</property>
             <property name="subclass">DIALOG_SHIM; dialog_shim.h</property>
             <property name="title">%s Control</property>
@@ -356,7 +356,7 @@
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
-                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxLEFT|wxRESERVE_SPACE_EVEN_IF_HIDDEN|wxRIGHT</property>
                             <property name="proportion">1</property>
                             <object class="wxGauge" expanded="0">
                                 <property name="BottomDockable">1</property>
@@ -384,14 +384,14 @@
                                 <property name="floatable">1</property>
                                 <property name="font"></property>
                                 <property name="gripper">0</property>
-                                <property name="hidden">0</property>
+                                <property name="hidden">1</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="max_size"></property>
                                 <property name="maximize_button">0</property>
                                 <property name="maximum_size"></property>
                                 <property name="min_size"></property>
                                 <property name="minimize_button">0</property>
-                                <property name="minimum_size"></property>
+                                <property name="minimum_size">-1,-1</property>
                                 <property name="moveable">1</property>
                                 <property name="name">m_progressBar</property>
                                 <property name="pane_border">1</property>
@@ -401,10 +401,10 @@
                                 <property name="pin_button">1</property>
                                 <property name="pos"></property>
                                 <property name="range">100</property>
-                                <property name="resize">Resizable</property>
+                                <property name="resize">Fixed</property>
                                 <property name="show">1</property>
                                 <property name="size">-1,-1</property>
-                                <property name="style">wxGA_HORIZONTAL</property>
+                                <property name="style">wxGA_HORIZONTAL|wxGA_SMOOTH</property>
                                 <property name="subclass">; ; forward_declare</property>
                                 <property name="toolbar_pane">0</property>
                                 <property name="tooltip"></property>
@@ -516,11 +516,11 @@
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
-                                <property name="minimum_size">-1,100</property>
+                                <property name="minimum_size">-1,200</property>
                                 <property name="name">m_dataView</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
-                                <property name="size">-1,300</property>
+                                <property name="size">-1,-1</property>
                                 <property name="style"></property>
                                 <property name="subclass">; ; forward_declare</property>
                                 <property name="tooltip"></property>
@@ -543,7 +543,7 @@
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND|wxLEFT</property>
-                            <property name="proportion">1</property>
+                            <property name="proportion">0</property>
                             <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer10</property>

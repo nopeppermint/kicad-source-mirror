@@ -32,6 +32,7 @@
 #include <class_library.h>
 #include <colors_design_settings.h>
 #include <connection_graph.h>
+#include <erc/erc_violation.h>
 #include <gal/graphics_abstraction_layer.h>
 #include <geometry/geometry_utils.h>
 #include <geometry/shape_line_chain.h>
@@ -239,7 +240,7 @@ float SCH_PAINTER::getShadowWidth()
 }
 
 
-COLOR4D SCH_PAINTER::getRenderColor( const EDA_ITEM* aItem, int aLayer, bool aDrawingShadows )
+COLOR4D SCH_PAINTER::getRenderColor( const EDA_ITEM* aItem, int aLayer, SHADOW_TYPE aShadowType )
 {
     static COLOR4D highlightColor( 1.0, 0.3, 0.3, 1.0 );
 
@@ -248,21 +249,29 @@ COLOR4D SCH_PAINTER::getRenderColor( const EDA_ITEM* aItem, int aLayer, bool aDr
     if( aItem->Type() == SCH_LINE_T )
         color = static_cast<const SCH_LINE*>( aItem )->GetLineColor();
 
-    if( aItem->IsBrightened() && !aDrawingShadows ) // Selection disambiguation, etc.
+    // Selection disambiguation, etc.
+    if( aItem->IsBrightened() && aShadowType == SHADOW_TYPE::NONE )
     {
         color = m_schSettings.GetLayerColor( LAYER_BRIGHTENED );
 
         if( aLayer == LAYER_DEVICE_BACKGROUND || aLayer == LAYER_SHEET_BACKGROUND )
             color = color.WithAlpha( 0.2 );
     }
-    else if( aItem->IsSelected() )
+    else if( aItem->IsSelected() && aShadowType == SHADOW_TYPE::SELECTION )
     {
-        if( aDrawingShadows )
-            color = m_schSettings.GetLayerColor( LAYER_SELECTION_SHADOWS ).WithAlpha( 0.8 );
+        color = m_schSettings.GetLayerColor( LAYER_SELECTION_SHADOWS ).WithAlpha( 0.8 );
     }
     else if( aItem->IsHighlighted() )               // Cross-probing
     {
         color = highlightColor;
+    }
+    else if( aShadowType == SHADOW_TYPE::ERC_WARN )
+    {
+        color = m_schSettings.GetLayerColor( LAYER_ERC_WARN ).WithAlpha( 0.8 );
+    }
+    else if( aShadowType == SHADOW_TYPE::ERC_ERR )
+    {
+        color = m_schSettings.GetLayerColor( LAYER_ERC_ERR ).WithAlpha( 0.8 );
     }
 
     if( m_schSettings.m_ShowDisabled )
@@ -272,11 +281,31 @@ COLOR4D SCH_PAINTER::getRenderColor( const EDA_ITEM* aItem, int aLayer, bool aDr
 }
 
 
+SCH_PAINTER::SHADOW_TYPE SCH_PAINTER::getShadowType( const EDA_ITEM* aItem, int aLayer )
+{
+    if( aLayer != LAYER_SELECTION_SHADOWS )
+        return SHADOW_TYPE::NONE;
+
+    SHADOW_TYPE shadow = aItem->IsSelected() ? SHADOW_TYPE::SELECTION : SHADOW_TYPE::NONE;
+
+    if( !aItem->GetViolationsList().empty() )
+    {
+        shadow = SHADOW_TYPE::ERC_WARN;
+
+        for( auto violation : aItem->GetViolationsList() )
+            if( violation->GetSeverity() == VIOLATION::SEVERITY::ERR )
+                shadow = SHADOW_TYPE::ERC_ERR;
+    }
+
+    return shadow;
+}
+
+
 float SCH_PAINTER::getLineWidth( const LIB_ITEM* aItem, bool aDrawingShadows )
 {
     float width = (float) aItem->GetPenSize();
 
-    if( aItem->IsSelected() && aDrawingShadows )
+    if( aDrawingShadows )
         width += getShadowWidth();
 
     return width;
@@ -287,7 +316,7 @@ float SCH_PAINTER::getLineWidth( const SCH_ITEM* aItem, bool aDrawingShadows )
 {
    float width = (float) aItem->GetPenSize();
 
-   if( aItem->IsSelected() && aDrawingShadows )
+   if( aDrawingShadows )
        width += getShadowWidth();
 
    return width;
@@ -301,7 +330,7 @@ float SCH_PAINTER::getTextThickness( const SCH_TEXT* aItem, bool aDrawingShadows
     if( width == 0 )
         width = (float) GetDefaultLineThickness();
 
-    if( aItem->IsSelected() && aDrawingShadows )
+    if( aDrawingShadows )
         width += getShadowWidth();
 
     return width;
@@ -365,22 +394,26 @@ bool SCH_PAINTER::setDeviceColors( const LIB_ITEM* aItem, int aLayer )
     switch( aLayer )
     {
     case LAYER_SELECTION_SHADOWS:
-        if( aItem->IsSelected() )
+    {
+        SHADOW_TYPE shadow = getShadowType( aItem, aLayer );
+
+        if( shadow != SHADOW_TYPE::NONE )
         {
             m_gal->SetIsFill( false );
             m_gal->SetIsStroke( true );
             m_gal->SetLineWidth( getLineWidth( aItem, true ) );
-            m_gal->SetStrokeColor( getRenderColor( aItem, LAYER_DEVICE, true ) );
-            m_gal->SetFillColor( getRenderColor( aItem, LAYER_DEVICE, true ) );
+            m_gal->SetStrokeColor( getRenderColor( aItem, LAYER_DEVICE, shadow ) );
+            m_gal->SetFillColor( getRenderColor( aItem, LAYER_DEVICE, shadow ) );
             return true;
         }
 
         return false;
+    }
 
     case LAYER_DEVICE_BACKGROUND:
         if( aItem->GetFillMode() == FILLED_WITH_BG_BODYCOLOR )
         {
-            COLOR4D fillColor = getRenderColor( aItem, LAYER_DEVICE_BACKGROUND, false );
+            COLOR4D fillColor = getRenderColor( aItem, LAYER_DEVICE_BACKGROUND, SHADOW_TYPE::NONE );
 
             // These actions place the item over others, so allow a modest transparency here
             if( aItem->IsMoving() || aItem->IsDragging() || aItem->IsResized() )
@@ -396,10 +429,10 @@ bool SCH_PAINTER::setDeviceColors( const LIB_ITEM* aItem, int aLayer )
 
     case LAYER_DEVICE:
         m_gal->SetIsFill( aItem->GetFillMode() == FILLED_SHAPE );
-        m_gal->SetFillColor( getRenderColor( aItem, LAYER_DEVICE, false ) );
+        m_gal->SetFillColor( getRenderColor( aItem, LAYER_DEVICE, SHADOW_TYPE::NONE ) );
         m_gal->SetIsStroke( aItem->GetPenSize() > 0 );
         m_gal->SetLineWidth( getLineWidth( aItem, false ) );
-        m_gal->SetStrokeColor( getRenderColor( aItem, LAYER_DEVICE, false ) );
+        m_gal->SetStrokeColor( getRenderColor( aItem, LAYER_DEVICE, SHADOW_TYPE::NONE ) );
 
         return true;
 
@@ -506,8 +539,9 @@ void SCH_PAINTER::draw( LIB_POLYLINE *aLine, int aLayer )
 void SCH_PAINTER::draw( LIB_FIELD *aField, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aField, aLayer );
 
-    if( drawingShadows && !aField->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     if( !isUnitAndConversionShown( aField ) )
@@ -530,17 +564,17 @@ void SCH_PAINTER::draw( LIB_FIELD *aField, int aLayer )
     if( !foundLayer )
         return;
 
-    COLOR4D color = getRenderColor( aField, aLayer, drawingShadows );
+    COLOR4D color = getRenderColor( aField, aLayer, shadow );
 
     if( !aField->IsVisible() )
     {
         if( m_schSettings.m_ShowHiddenText || aField->IsBrightened() )
-            color = getRenderColor( aField, LAYER_HIDDEN, drawingShadows );
+            color = getRenderColor( aField, LAYER_HIDDEN, shadow );
         else
             return;
     }
 
-    m_gal->SetLineWidth( getLineWidth( aField, drawingShadows ) );
+    m_gal->SetLineWidth( getLineWidth( aField, shadow != SHADOW_TYPE::NONE ) );
     m_gal->SetIsFill( false );
     m_gal->SetIsStroke( true );
     m_gal->SetStrokeColor( color );
@@ -588,16 +622,17 @@ void SCH_PAINTER::draw( LIB_TEXT *aText, int aLayer )
         return;
 
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aText, aLayer );
 
-    if( drawingShadows && !aText->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
-    COLOR4D color = getRenderColor( aText, LAYER_DEVICE, drawingShadows );
+    COLOR4D color = getRenderColor( aText, LAYER_DEVICE, shadow );
 
     if( !aText->IsVisible() )
     {
         if( m_schSettings.m_ShowHiddenText || aText->IsBrightened() )
-            color = getRenderColor( aText, LAYER_HIDDEN, drawingShadows );
+            color = getRenderColor( aText, LAYER_HIDDEN, shadow );
         else
             return;
     }
@@ -651,18 +686,19 @@ void SCH_PAINTER::draw( LIB_PIN *aPin, int aLayer )
         return;
 
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aPin, aLayer );
 
-    if( drawingShadows && !aPin->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     VECTOR2I pos = mapCoords( aPin->GetPosition() );
-    COLOR4D  color = getRenderColor( aPin, LAYER_PIN, drawingShadows );
+    COLOR4D  color = getRenderColor( aPin, LAYER_PIN, shadow );
 
     if( !aPin->IsVisible() )
     {
         if( m_schSettings.m_ShowHiddenPins )
         {
-            color = getRenderColor( aPin, LAYER_HIDDEN, drawingShadows );
+            color = getRenderColor( aPin, LAYER_HIDDEN, shadow );
         }
         else
         {
@@ -860,12 +896,12 @@ void SCH_PAINTER::draw( LIB_PIN *aPin, int aLayer )
     {
         size     [INSIDE] = libEntry->ShowPinNames() ? aPin->GetNameTextSize() : 0;
         thickness[INSIDE] = nameLineWidth;
-        colour   [INSIDE] = getRenderColor( aPin, LAYER_PINNAM, drawingShadows );
+        colour   [INSIDE] = getRenderColor( aPin, LAYER_PINNAM, shadow );
         text     [INSIDE] = aPin->GetName();
 
         size     [ABOVE] = libEntry->ShowPinNumbers() ? aPin->GetNumberTextSize() : 0;
         thickness[ABOVE] = numLineWidth;
-        colour   [ABOVE] = getRenderColor( aPin, LAYER_PINNUM, drawingShadows );
+        colour   [ABOVE] = getRenderColor( aPin, LAYER_PINNUM, shadow );
         text     [ABOVE] = aPin->GetNumber();
     }
     // Otherwise pin NAMES go above and pin NUMBERS go below
@@ -873,12 +909,12 @@ void SCH_PAINTER::draw( LIB_PIN *aPin, int aLayer )
     {
         size     [ABOVE] = libEntry->ShowPinNames() ? aPin->GetNameTextSize() : 0;
         thickness[ABOVE] = nameLineWidth;
-        colour   [ABOVE] = getRenderColor( aPin, LAYER_PINNAM, drawingShadows );
+        colour   [ABOVE] = getRenderColor( aPin, LAYER_PINNAM, shadow );
         text     [ABOVE] = aPin->GetName();
 
         size     [BELOW] = libEntry->ShowPinNumbers() ? aPin->GetNumberTextSize() : 0;
         thickness[BELOW] = numLineWidth;
-        colour   [BELOW] = getRenderColor( aPin, LAYER_PINNUM, drawingShadows );
+        colour   [BELOW] = getRenderColor( aPin, LAYER_PINNUM, shadow );
         text     [BELOW] = aPin->GetNumber();
     }
 
@@ -886,14 +922,14 @@ void SCH_PAINTER::draw( LIB_PIN *aPin, int aLayer )
     {
         size     [OUTSIDE] = std::max( aPin->GetNameTextSize() * 3 / 4, Millimeter2iu( 0.7 ) );
         thickness[OUTSIDE] = float( size[OUTSIDE] ) / 6.0F;
-        colour   [OUTSIDE] = getRenderColor( aPin, LAYER_NOTES, drawingShadows );
+        colour   [OUTSIDE] = getRenderColor( aPin, LAYER_NOTES, shadow );
         text     [OUTSIDE] = aPin->GetElectricalTypeName();
     }
 
     if( !aPin->IsVisible() )
     {
         for( COLOR4D& c : colour )
-            c = getRenderColor( aPin, LAYER_HIDDEN, drawingShadows );
+            c = getRenderColor( aPin, LAYER_HIDDEN, shadow );
     }
 
     int   insideOffset = textOffset;
@@ -1086,17 +1122,18 @@ void SCH_PAINTER::drawDanglingSymbol( const wxPoint& aPos, bool aDrawingShadows 
 void SCH_PAINTER::draw( SCH_JUNCTION *aJct, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aJct, aLayer );
 
-    if( drawingShadows && !aJct->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     COLOR4D color;
     auto    conn = aJct->Connection( *g_CurrentSheet );
 
     if( conn && conn->IsBus() )
-        color = getRenderColor( aJct, LAYER_BUS, drawingShadows );
+        color = getRenderColor( aJct, LAYER_BUS, shadow );
     else
-        color = getRenderColor( aJct, LAYER_JUNCTION, drawingShadows );
+        color = getRenderColor( aJct, LAYER_JUNCTION, shadow );
 
     m_gal->SetIsStroke( drawingShadows );
     m_gal->SetLineWidth( getLineWidth( aJct, drawingShadows ) );
@@ -1109,12 +1146,13 @@ void SCH_PAINTER::draw( SCH_JUNCTION *aJct, int aLayer )
 
 void SCH_PAINTER::draw( SCH_LINE *aLine, int aLayer )
 {
+    SHADOW_TYPE shadow  = getShadowType( aLine, aLayer );
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
 
-    if( drawingShadows && !aLine->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
-    COLOR4D color = getRenderColor( aLine, aLine->GetLayer(), drawingShadows );
+    COLOR4D color = getRenderColor( aLine, aLine->GetLayer(), shadow );
     float   width = getLineWidth( aLine, drawingShadows );
 
     m_gal->SetIsStroke( true );
@@ -1182,8 +1220,9 @@ void SCH_PAINTER::draw( SCH_LINE *aLine, int aLayer )
 void SCH_PAINTER::draw( SCH_TEXT *aText, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aText, aLayer );
 
-    if( drawingShadows && !aText->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     switch( aText->Type() )
@@ -1195,16 +1234,16 @@ void SCH_PAINTER::draw( SCH_TEXT *aText, int aLayer )
     default:                  aLayer = LAYER_NOTES;      break;
     }
 
-    COLOR4D         color = getRenderColor( aText, aLayer, drawingShadows );
+    COLOR4D         color = getRenderColor( aText, aLayer, shadow );
     SCH_CONNECTION* conn = aText->Connection( *g_CurrentSheet );
 
     if( conn && conn->IsBus() )
-        color = getRenderColor( aText, LAYER_BUS, drawingShadows );
+        color = getRenderColor( aText, LAYER_BUS, shadow );
 
     if( !aText->IsVisible() )
     {
         if( m_schSettings.m_ShowHiddenText || aText->IsBrightened() )
-            color = getRenderColor( aText, LAYER_HIDDEN, drawingShadows );
+            color = getRenderColor( aText, LAYER_HIDDEN, shadow );
         else
             return;
     }
@@ -1357,8 +1396,9 @@ void SCH_PAINTER::draw( SCH_COMPONENT *aComp, int aLayer )
 void SCH_PAINTER::draw( SCH_FIELD *aField, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aField, aLayer );
 
-    if( drawingShadows && !aField->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     switch( aField->GetId() )
@@ -1368,12 +1408,12 @@ void SCH_PAINTER::draw( SCH_FIELD *aField, int aLayer )
     default:        aLayer = LAYER_FIELDS;        break;
     }
 
-    COLOR4D color = getRenderColor( aField, aLayer, drawingShadows );
+    COLOR4D color = getRenderColor( aField, aLayer, shadow );
 
     if( !aField->IsVisible() )
     {
         if( m_schSettings.m_ShowHiddenText || aField->IsBrightened() )
-            color = getRenderColor( aField, LAYER_HIDDEN, drawingShadows );
+            color = getRenderColor( aField, LAYER_HIDDEN, shadow );
         else
             return;
     }
@@ -1451,11 +1491,12 @@ void SCH_PAINTER::draw( SCH_FIELD *aField, int aLayer )
 void SCH_PAINTER::draw( SCH_GLOBALLABEL *aLabel, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aLabel, aLayer );
 
-    if( drawingShadows && !aLabel->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
-    COLOR4D color = getRenderColor( aLabel, LAYER_GLOBLABEL, drawingShadows );
+    COLOR4D color = getRenderColor( aLabel, LAYER_GLOBLABEL, shadow );
 
     std::vector<wxPoint> pts;
     std::deque<VECTOR2D> pts2;
@@ -1487,16 +1528,17 @@ void SCH_PAINTER::draw( SCH_GLOBALLABEL *aLabel, int aLayer )
 void SCH_PAINTER::draw( SCH_HIERLABEL *aLabel, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aLabel, aLayer );
 
-    if( drawingShadows && !aLabel->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
-    COLOR4D color = getRenderColor( aLabel, LAYER_SHEETLABEL, drawingShadows );
+    COLOR4D color = getRenderColor( aLabel, LAYER_SHEETLABEL, shadow );
 
     SCH_CONNECTION* conn = aLabel->Connection( *g_CurrentSheet );
 
     if( conn && conn->IsBus() )
-        color = getRenderColor( aLabel, LAYER_BUS, drawingShadows );
+        color = getRenderColor( aLabel, LAYER_BUS, shadow );
 
     std::vector<wxPoint> pts;
     std::deque<VECTOR2D> pts2;
@@ -1519,7 +1561,9 @@ void SCH_PAINTER::draw( SCH_HIERLABEL *aLabel, int aLayer )
 void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aSheet, aLayer );
 
+    // TODO(JE) sheet pin handling
     if( aLayer == LAYER_HIERLABEL || drawingShadows )
     {
         for( SCH_SHEET_PIN* sheetPin : aSheet->GetPins() )
@@ -1551,7 +1595,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
         }
     }
 
-    if( drawingShadows && !aSheet->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     VECTOR2D pos = aSheet->GetPosition();
@@ -1561,7 +1605,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
     {
         m_gal->SetIsStroke( aSheet->IsSelected() );
         m_gal->SetLineWidth( getShadowWidth() );
-        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEET_BACKGROUND, true ) );
+        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEET_BACKGROUND, shadow ) );
 
         if( aSheet->IsMoving() )    // Gives a filled background when moving for a better look
         {
@@ -1573,7 +1617,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
         else
         {
             // Could be modified later, when sheets can have their own fill color
-            m_gal->SetFillColor( getRenderColor( aSheet, LAYER_SHEET_BACKGROUND, true ) );
+            m_gal->SetFillColor( getRenderColor( aSheet, LAYER_SHEET_BACKGROUND, shadow ) );
             m_gal->SetIsFill( aSheet->IsSelected() && GetSelectionFillShapes() );
         }
 
@@ -1582,7 +1626,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
 
     if( aLayer == LAYER_SHEET || drawingShadows )
     {
-        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEET, drawingShadows ) );
+        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEET, shadow ) );
         m_gal->SetIsStroke( true );
         m_gal->SetLineWidth( getLineWidth( aSheet, drawingShadows ) );
         m_gal->SetIsFill( false );
@@ -1613,7 +1657,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
             }
         }
 
-        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEETNAME, drawingShadows ) );
+        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEETNAME, shadow ) );
 
         auto text = wxT( "Sheet: " ) + aSheet->GetName();
 
@@ -1630,7 +1674,7 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
 
         txtSize = aSheet->GetFileNameSize();
         m_gal->SetGlyphSize( VECTOR2D( txtSize, txtSize ) );
-        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEETFILENAME, drawingShadows ) );
+        m_gal->SetStrokeColor( getRenderColor( aSheet, LAYER_SHEETFILENAME, shadow ) );
         m_gal->SetVerticalJustify( GR_TEXT_VJUSTIFY_TOP );
 
         text = wxT( "File: " ) + aSheet->GetFileName();
@@ -1642,13 +1686,14 @@ void SCH_PAINTER::draw( SCH_SHEET *aSheet, int aLayer )
 void SCH_PAINTER::draw( SCH_NO_CONNECT *aNC, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aNC, aLayer );
 
-    if( drawingShadows && !aNC->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
     m_gal->SetIsStroke( true );
     m_gal->SetLineWidth( getLineWidth( aNC, drawingShadows ) );
-    m_gal->SetStrokeColor( getRenderColor( aNC, LAYER_NOCONNECT, drawingShadows ) );
+    m_gal->SetStrokeColor( getRenderColor( aNC, LAYER_NOCONNECT, shadow ) );
     m_gal->SetIsFill( false );
 
     VECTOR2D p = aNC->GetPosition();
@@ -1662,14 +1707,15 @@ void SCH_PAINTER::draw( SCH_NO_CONNECT *aNC, int aLayer )
 void SCH_PAINTER::draw( SCH_BUS_ENTRY_BASE *aEntry, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
+    SHADOW_TYPE shadow  = getShadowType( aEntry, aLayer );
 
-    if( drawingShadows && !aEntry->IsSelected() )
+    if( drawingShadows && shadow == SHADOW_TYPE::NONE )
         return;
 
-    COLOR4D color = getRenderColor( aEntry, LAYER_WIRE, drawingShadows );
+    COLOR4D color = getRenderColor( aEntry, LAYER_WIRE, shadow );
 
     if( aEntry->Type() == SCH_BUS_BUS_ENTRY_T )
-        color = getRenderColor( aEntry, LAYER_BUS, drawingShadows );
+        color = getRenderColor( aEntry, LAYER_BUS, shadow );
 
     m_gal->SetIsStroke( true );
     m_gal->SetLineWidth( getLineWidth( aEntry, drawingShadows ) );
@@ -1711,9 +1757,11 @@ void SCH_PAINTER::draw( SCH_BITMAP *aBitmap, int aLayer )
 
     if( aLayer == LAYER_SELECTION_SHADOWS )
     {
-        if( aBitmap->IsSelected() || aBitmap->IsBrightened() || aBitmap->IsHighlighted() )
+        SHADOW_TYPE shadow = getShadowType( aBitmap, aLayer );
+
+        if( shadow != SHADOW_TYPE::NONE || aBitmap->IsBrightened() || aBitmap->IsHighlighted() )
         {
-            COLOR4D color = getRenderColor( aBitmap, LAYER_DRAW_BITMAPS, true );
+            COLOR4D color = getRenderColor( aBitmap, LAYER_DRAW_BITMAPS, shadow );
             m_gal->SetIsStroke( true );
             m_gal->SetStrokeColor( color );
             m_gal->SetLineWidth ( getShadowWidth() );
@@ -1737,6 +1785,7 @@ void SCH_PAINTER::draw( SCH_BITMAP *aBitmap, int aLayer )
 }
 
 
+// TODO(JE) remove and replace with a VIOLATION painter
 void SCH_PAINTER::draw( SCH_MARKER *aMarker, int aLayer )
 {
     bool drawingShadows = aLayer == LAYER_SELECTION_SHADOWS;
@@ -1749,7 +1798,8 @@ void SCH_PAINTER::draw( SCH_MARKER *aMarker, int aLayer )
     else
         aLayer = LAYER_ERC_WARN;
 
-    COLOR4D color = getRenderColor( aMarker, aLayer, drawingShadows );
+    COLOR4D color = getRenderColor( aMarker, aLayer,
+            drawingShadows ? SHADOW_TYPE::SELECTION : SHADOW_TYPE::NONE );
 
     m_gal->Save();
     m_gal->Translate( aMarker->GetPosition() );

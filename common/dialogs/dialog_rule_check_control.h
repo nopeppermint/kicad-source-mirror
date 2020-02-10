@@ -59,10 +59,10 @@ protected:
 
     virtual void onEngineFinished( bool aChecksPassed );
 
-    virtual void onEngineProgress( double aProgress );
+    virtual void onEngineProgress( double aProgress, wxString aStatusMessage );
 
 
-private:
+protected:
     /// Handler to the manager that spawned this dialog
     RULE_CHECK_MANAGER_BASE* m_manager;
 };

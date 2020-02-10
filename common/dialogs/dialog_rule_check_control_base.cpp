@@ -50,9 +50,11 @@ DIALOG_RULE_CHECK_CONTROL_BASE::DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 
-	m_progressBar = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
+	m_progressBar = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL|wxGA_SMOOTH );
 	m_progressBar->SetValue( 0 );
-	bSizer8->Add( m_progressBar, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5 );
+	m_progressBar->Hide();
+
+	bSizer8->Add( m_progressBar, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRESERVE_SPACE_EVEN_IF_HIDDEN|wxRIGHT, 5 );
 
 	m_btnSettings = new wxButton( this, wxID_ANY, _("&Edit design rules..."), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer8->Add( m_btnSettings, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
@@ -63,8 +65,8 @@ DIALOG_RULE_CHECK_CONTROL_BASE::DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 
-	m_dataView = new wxDataViewTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,300 ), 0 );
-	m_dataView->SetMinSize( wxSize( -1,100 ) );
+	m_dataView = new wxDataViewTreeCtrl( this, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), 0 );
+	m_dataView->SetMinSize( wxSize( -1,200 ) );
 
 	bSizer9->Add( m_dataView, 1, wxALL|wxEXPAND, 5 );
 
@@ -89,7 +91,7 @@ DIALOG_RULE_CHECK_CONTROL_BASE::DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent
 	bSizer10->Add( m_cbHighlight, 0, wxALL, 5 );
 
 
-	m_sizerButtons->Add( bSizer10, 1, wxEXPAND|wxLEFT, 5 );
+	m_sizerButtons->Add( bSizer10, 0, wxEXPAND|wxLEFT, 5 );
 
 	m_sdbSizer = new wxStdDialogButtonSizer();
 	m_sdbSizerOK = new wxButton( this, wxID_OK );
@@ -106,6 +108,7 @@ DIALOG_RULE_CHECK_CONTROL_BASE::DIALOG_RULE_CHECK_CONTROL_BASE( wxWindow* parent
 
 	this->SetSizer( m_MainSizer );
 	this->Layout();
+	m_MainSizer->Fit( this );
 
 	// Connect Events
 	this->Connect( wxEVT_ACTIVATE, wxActivateEventHandler( DIALOG_RULE_CHECK_CONTROL_BASE::OnActivateDlg ) );

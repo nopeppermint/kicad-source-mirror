@@ -22,6 +22,7 @@
 #define KICAD_RULE_CHECK_ENGINE_H
 
 #include <functional>
+#include <wx/string.h>
 
 /**
  * A rule checker (ERC or DRC) that is controlled and owned by a rule check manager.
@@ -30,28 +31,44 @@
 class RULE_CHECK_ENGINE
 {
 public:
-    RULE_CHECK_ENGINE() {}
+    RULE_CHECK_ENGINE() : m_should_abort( false )
+    {
+    }
 
-    virtual ~RULE_CHECK_ENGINE() {}
+    virtual ~RULE_CHECK_ENGINE() = default;
 
     virtual bool Start() = 0;
 
     void SetCallbacks( std::function<void(bool)> aFinishedCallback,
-                       std::function<void(double)> aProgressCallback = {} )
+                       std::function<void(double, wxString)> aProgressCallback = {} )
     {
-        m_finishedCallback = aFinishedCallback;
-        m_progressCallback = aProgressCallback;
+        m_finishedCallback = std::move( aFinishedCallback );
+        m_progressCallback = std::move( aProgressCallback );
     }
 
     virtual double GetProgress() = 0;
 
+    virtual void Abort() = 0;
+
+    std::vector<VIOLATION*>& GetViolations() { return m_violations; }
+
 protected:
+
+    void reportProgress( double aProgress, const wxString& aMessage )
+    {
+        if( m_progressCallback )
+            m_progressCallback( aProgress, aMessage );
+    }
 
     /// Called when the rule check finishes.  Argument is true if no violations, false otherwise.
     std::function<void(bool)> m_finishedCallback;
 
-    /// Called with the progress is updated.  Argument is progress as a ratio.
-    std::function<void(double)> m_progressCallback;
+    /// Called with the progress is updated.  Argument is progress as a ratio, and a status message
+    std::function<void(double, wxString)> m_progressCallback;
+
+    bool m_should_abort;
+
+    std::vector<VIOLATION*> m_violations;
 };
 
 #endif

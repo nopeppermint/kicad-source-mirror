@@ -19,12 +19,16 @@
  */
 
 #include <dialogs/dialog_erc_control.h>
+#include <erc/erc_engine.h>
+#include <erc/erc_violation.h>
 #include <sch_edit_frame.h>
 #include <tools/erc_manager.h>
 
 
 DIALOG_ERC_CONTROL::DIALOG_ERC_CONTROL( ERC_MANAGER* aManager, SCH_EDIT_FRAME* aEditorFrame,
-                                        wxWindowID aId ) : DIALOG_RULE_CHECK_CONTROL( aManager, aEditorFrame, aId ), m_editFrame( aEditorFrame )
+                                        wxWindowID aId ) :
+        DIALOG_RULE_CHECK_CONTROL( aManager, aEditorFrame, aId ),
+        m_editFrame( aEditorFrame )
 {
     SetTitle( _( "ERC Control" ) );
 
@@ -43,4 +47,37 @@ DIALOG_ERC_CONTROL::DIALOG_ERC_CONTROL( ERC_MANAGER* aManager, SCH_EDIT_FRAME* a
 
 DIALOG_ERC_CONTROL::~DIALOG_ERC_CONTROL()
 {
+}
+
+
+void DIALOG_ERC_CONTROL::onEngineFinished( bool aChecksPassed )
+{
+    DIALOG_RULE_CHECK_CONTROL::onEngineFinished( aChecksPassed );
+
+    auto view = m_editFrame->GetCanvas()->GetView();
+
+    for( const auto& violation : getManager()->GetEngine<ERC_ENGINE>()->GetViolations() )
+    {
+        EDA_ITEM* first  = violation->FirstItem();
+        EDA_ITEM* second = violation->SecondItem();
+
+        wxASSERT( first );
+
+        first->AddViolation( violation );
+        view->Update( first );
+
+        if( second )
+        {
+            second->AddViolation( violation );
+            view->Update( second );
+        }
+    }
+
+    m_editFrame->GetCanvas()->Refresh();
+}
+
+
+ERC_MANAGER* DIALOG_ERC_CONTROL::getManager()
+{
+    return static_cast<ERC_MANAGER*>( m_manager );
 }

@@ -21,6 +21,7 @@
 #include <advanced_config.h>
 #include <dialogs/dialog_erc_control.h>
 #include <erc/erc_engine.h>
+#include <erc/erc_violation.h>
 #include <id.h>
 #include <sch_edit_frame.h>
 #include <tools/ee_actions.h>
@@ -35,8 +36,7 @@ ERC_MANAGER::ERC_MANAGER() : RULE_CHECK_MANAGER_BASE( "eeschema.ERCManager" ),
 
 ERC_MANAGER::~ERC_MANAGER()
 {
-    if( m_engine )
-        delete m_engine;
+    delete m_engine;
 }
 
 
@@ -44,6 +44,40 @@ void ERC_MANAGER::Reset( RESET_REASON aReason )
 {
     m_schFrame = getEditFrame<SCH_EDIT_FRAME>();
     m_engine = new ERC_ENGINE;
+
+    static_cast<ERC_ENGINE*>( m_engine )->SetEditFrame( m_schFrame );
+}
+
+
+bool ERC_MANAGER::RunChecks()
+{
+    static_cast<ERC_ENGINE*>( m_engine )->WaitForFinish();
+    return RULE_CHECK_MANAGER_BASE::RunChecks();
+}
+
+
+void ERC_MANAGER::ClearViolations()
+{
+    std::set<EDA_ITEM*> to_update;
+
+    for( const auto& violation : m_engine->GetViolations() )
+    {
+        to_update.insert( violation->FirstItem() );
+
+        if( violation->SecondItem() )
+            to_update.insert( violation->SecondItem() );
+    }
+
+    RULE_CHECK_MANAGER_BASE::ClearViolations();
+
+    auto view = m_schFrame->GetCanvas()->GetView();
+
+    for( auto& item : to_update )
+    {
+        view->Update( item );
+    }
+
+    m_schFrame->GetCanvas()->Refresh();
 }
 
 

@@ -21,13 +21,13 @@
 #include <erc/erc_violation.h>
 
 
-std::string ERC_VIOLATION::GetTypeAsString( ERC_VIOLATION_TYPE aType )
+wxString ERC_VIOLATION::GetTypeAsString( ERC_VIOLATION_TYPE aType )
 {
     switch( aType )
     {
-    case ERC_VIOLATION_TYPE::BUS:
-        return _( "Bus violations" ).ToStdString();
-
+    case ERC_VIOLATION_TYPE::BUS_NET_CONFLICT:
+        return _( "Bus to net conflict" );
+#if 0
     case ERC_VIOLATION_TYPE::CONNECTION:
         return _( "Connection violations" ).ToStdString();
 
@@ -45,10 +45,10 @@ std::string ERC_VIOLATION::GetTypeAsString( ERC_VIOLATION_TYPE aType )
 
     case ERC_VIOLATION_TYPE::SYMBOL:
         return _( "Symbol violations" ).ToStdString();
-
+#endif
     default:
         break;
     }
 
-    return std::string();
+    return wxEmptyString;
 }

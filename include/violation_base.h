@@ -43,25 +43,27 @@ public:
         ERR
     };
 
-    VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, VECTOR2I aFirstPosition,
-               EDA_ITEM* aSecondItem, VECTOR2I aSecondPosition ) :
+    VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, const VECTOR2I& aFirstPosition,
+               EDA_ITEM* aSecondItem, const VECTOR2I& aSecondPosition ) :
             m_type( aType ), m_units( aUnits ), m_firstItem( aFirstItem ),
-            m_secondItem( aSecondItem ), m_firstPosition( aFirstPosition ),
+            m_firstPosition( aFirstPosition ), m_secondItem( aSecondItem ),
             m_secondPosition( aSecondPosition )
     {}
 
-    VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, VECTOR2I aFirstPosition ) :
+    VIOLATION( int aType, EDA_UNITS aUnits, EDA_ITEM* aFirstItem, const VECTOR2I& aFirstPosition ) :
             m_type( aType ), m_units( aUnits ), m_firstItem( aFirstItem ),
-            m_secondItem( nullptr ), m_firstPosition( aFirstPosition ), m_secondPosition()
+            m_firstPosition( aFirstPosition ), m_secondItem( nullptr ), m_secondPosition()
     {}
 
     virtual ~VIOLATION() {}
 
+    SEVERITY GetSeverity() { return m_severity; }
+
     /// Returns the violation title: a short string used to display the violation in a list
-    virtual std::string GetTitle() = 0;
+    virtual wxString GetTitle() = 0;
 
     /// Returns the violation description: a longer text that explains the violation in detail
-    virtual std::string GetDescription() = 0;
+    virtual wxString GetDescription() = 0;
 
     /**
      * Returns some extra text that can be displayed in the UI in addition to the description.
@@ -70,7 +72,15 @@ public:
      *
      * @return help text, or empty string if not overridden
      */
-    virtual std::string GetHelpText() { return std::string(); };
+    virtual wxString GetHelpText() { return wxEmptyString; };
+
+    EDA_ITEM* FirstItem() { return m_firstItem; }
+
+    VECTOR2D FirstPosition() { return m_firstPosition; }
+
+    EDA_ITEM* SecondItem() { return m_secondItem; }
+
+    VECTOR2D SecondPosition() { return m_secondPosition; }
 
 protected:
 
@@ -86,11 +96,11 @@ protected:
     /// The first (or only) linked item to this violation
     EDA_ITEM* m_firstItem;
 
-    /// The second linked item, or nullptr for unary violations
-    EDA_ITEM* m_secondItem;
-
     /// The position (in world space) of the violation's first "point of interest"
     VECTOR2D m_firstPosition;
+
+    /// The second linked item, or nullptr for unary violations
+    EDA_ITEM* m_secondItem;
 
     /// The position (in world space) of the violation's second "point of interest", if relevant
     VECTOR2D m_secondPosition;

@@ -21,6 +21,7 @@
 #include <dialogs/dialog_rule_check_control.h>
 #include <rule_check_engine.h>
 #include <tool/rule_check_manager.h>
+#include <violation_base.h>
 
 /**
  * Trace mask for debugging the rule checker system
@@ -52,6 +53,7 @@ void RULE_CHECK_MANAGER_BASE::DestroyControlDialog()
 
 bool RULE_CHECK_MANAGER_BASE::RunChecks()
 {
+    ClearViolations();
     return m_engine->Start();
 }
 
@@ -75,6 +77,17 @@ double RULE_CHECK_MANAGER_BASE::GetProgress()
 
 void RULE_CHECK_MANAGER_BASE::ClearViolations()
 {
+    for( auto violation : m_engine->GetViolations() )
+    {
+        violation->FirstItem()->ClearViolations();
+
+        if( violation->SecondItem() )
+            violation->SecondItem()->ClearViolations();
+
+        delete violation;
+    }
+
+    m_engine->GetViolations().clear();
 }
 
 

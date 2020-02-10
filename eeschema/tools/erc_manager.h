@@ -23,6 +23,7 @@
 
 #include <tool/rule_check_manager.h>
 
+class ERC_ENGINE;
 class SCH_EDIT_FRAME;
 class wxWindow;
 
@@ -36,6 +37,10 @@ public:
 
     /// @copydoc TOOL_INTERACTIVE::Reset()
     void Reset( RESET_REASON aReason ) override;
+
+    bool RunChecks() override;
+
+    void ClearViolations() override;
 
 private:
     void createControlDialog( wxWindow* aParent ) override;

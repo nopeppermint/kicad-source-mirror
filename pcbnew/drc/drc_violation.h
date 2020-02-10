@@ -39,7 +39,7 @@ enum class DRC_VIOLATION_TYPE
     LENGTH,         ///< Violation of a length constraint (including matched-length pairs)
     OTHER,          ///< Any violations that don't fit the other categories
     PADSTACK,       ///< Violation of via/hole constraints (drill and antipad sizes, etc)
-    SHORT,          ///< A short between copper items of different nets
+    SHORT_CIRCUIT,  ///< A short between copper items of different nets
     TRACK,          ///< Issues with a track segment (track in pad, zero length track, etc)
     UNCONNECTED,    ///< Missing connection between parts of a net
     WIDTH,          ///< Violation of a width constraint

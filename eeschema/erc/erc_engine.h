@@ -21,19 +21,48 @@
 #ifndef KICAD_ERC_ENGINE_H
 #define KICAD_ERC_ENGINE_H
 
+#include <future>
+
 #include <rule_check_engine.h>
+
+class ERC_VIOLATION;
+class SCH_EDIT_FRAME;
 
 
 class ERC_ENGINE : public RULE_CHECK_ENGINE
 {
 public:
-    ERC_ENGINE() : RULE_CHECK_ENGINE() {}
+    ERC_ENGINE() :
+            RULE_CHECK_ENGINE(), m_frame( nullptr )
+    {
+    }
 
-    virtual ~ERC_ENGINE() {}
+    virtual ~ERC_ENGINE() = default;
 
-    virtual bool Start() override;
+    bool Start() override;
 
-    virtual double GetProgress() override;
+    double GetProgress() override;
+
+    void WaitForFinish();
+
+    void Abort() override;
+
+    void SetEditFrame( SCH_EDIT_FRAME* aFrame )
+    {
+        m_frame = aFrame;
+    }
+
+private:
+
+    void run();
+
+    // This is temporary for testing the higher-level plumbing.
+    // Where to store checks, etc. needs another architecture pass later.
+    bool checkBusToNetConflicts();
+
+    SCH_EDIT_FRAME* m_frame;
+
+    std::future<void> m_runner_future;
 };
 
 

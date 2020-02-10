@@ -135,6 +135,15 @@ public:
         return &m_schSettings;
     }
 
+    /// Type of shadow to paint under items
+    enum class SHADOW_TYPE
+    {
+        NONE,
+        SELECTION,
+        ERC_WARN,
+        ERC_ERR
+    };
+
 private:
 	void draw( LIB_RECTANGLE* aRect, int aLayer );
 	void draw( LIB_PIN* aPin, int aLayer );
@@ -164,7 +173,12 @@ private:
     bool isUnitAndConversionShown( const LIB_ITEM* aItem );
 
     float getShadowWidth();
-    COLOR4D getRenderColor( const EDA_ITEM* aItem, int aLayer, bool aDrawingShadows );
+
+    COLOR4D getRenderColor( const EDA_ITEM* aItem, int aLayer,
+                            SHADOW_TYPE aShadowType = SHADOW_TYPE::NONE );
+
+    static SHADOW_TYPE getShadowType( const EDA_ITEM* aItem, int aLayer );
+
     float getLineWidth( const LIB_ITEM* aItem, bool aDrawingShadows );
     float getLineWidth( const SCH_ITEM* aItem, bool aDrawingShadows );
     float getTextThickness( const SCH_TEXT* aItem, bool aDrawingShadows );
