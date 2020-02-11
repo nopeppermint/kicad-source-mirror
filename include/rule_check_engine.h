@@ -46,8 +46,6 @@ public:
         m_progressCallback = std::move( aProgressCallback );
     }
 
-    virtual double GetProgress() = 0;
-
     virtual void Abort() = 0;
 
     std::vector<VIOLATION*>& GetViolations() { return m_violations; }

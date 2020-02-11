@@ -50,33 +50,6 @@ DIALOG_ERC_CONTROL::~DIALOG_ERC_CONTROL()
 }
 
 
-void DIALOG_ERC_CONTROL::onEngineFinished( bool aChecksPassed )
-{
-    DIALOG_RULE_CHECK_CONTROL::onEngineFinished( aChecksPassed );
-
-    auto view = m_editFrame->GetCanvas()->GetView();
-
-    for( const auto& violation : getManager()->GetEngine<ERC_ENGINE>()->GetViolations() )
-    {
-        EDA_ITEM* first  = violation->FirstItem();
-        EDA_ITEM* second = violation->SecondItem();
-
-        wxASSERT( first );
-
-        first->AddViolation( violation );
-        view->Update( first );
-
-        if( second )
-        {
-            second->AddViolation( violation );
-            view->Update( second );
-        }
-    }
-
-    m_editFrame->GetCanvas()->Refresh();
-}
-
-
 ERC_MANAGER* DIALOG_ERC_CONTROL::getManager()
 {
     return static_cast<ERC_MANAGER*>( m_manager );

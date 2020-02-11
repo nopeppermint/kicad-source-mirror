@@ -44,6 +44,10 @@ public:
 
     bool TransferDataFromWindow() override;
 
+    virtual void OnEngineFinished( bool aChecksPassed );
+
+    virtual void OnEngineProgress( double aProgress, wxString aStatusMessage );
+
 protected:
     virtual void OnReportCheckBoxClicked( wxCommandEvent& event ) override;
 
@@ -56,11 +60,6 @@ protected:
     virtual void OnCloseClick( wxCommandEvent& event ) override;
 
     virtual void OnStartChecksClick( wxCommandEvent& event ) override;
-
-    virtual void onEngineFinished( bool aChecksPassed );
-
-    virtual void onEngineProgress( double aProgress, wxString aStatusMessage );
-
 
 protected:
     /// Handler to the manager that spawned this dialog

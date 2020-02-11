@@ -123,8 +123,13 @@ protected:
     /// Can be overridden to add some logic to RunChecks() before the engine starts
     virtual void onRunChecks() {}
 
-    /// Can be overridden to add some logic after the checker completes (callback)
-    virtual void onChecksCompleted() {}
+    virtual void onEngineFinished( bool aChecksPassed )
+    {
+    }
+
+    virtual void onEngineProgress( double aProgress, wxString aStatusMessage )
+    {
+    }
 };
 
 #endif

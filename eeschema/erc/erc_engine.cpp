@@ -43,12 +43,6 @@ bool ERC_ENGINE::Start()
 }
 
 
-double ERC_ENGINE::GetProgress()
-{
-    return 1.0;
-}
-
-
 void ERC_ENGINE::WaitForFinish()
 {
     try

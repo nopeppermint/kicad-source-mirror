@@ -42,12 +42,29 @@ public:
 
     void ClearViolations() override;
 
+    int OnERCUpdate( const TOOL_EVENT& aEvent );
+
+    const static TOOL_EVENT ProgressEvent;
+
+    const static TOOL_EVENT FinishedEvent;
+
+protected:
+    void onEngineFinished( bool aChecksPassed ) override;
+
+    void onEngineProgress( double aProgress, wxString aStatusMessage ) override;
+
 private:
     void createControlDialog( wxWindow* aParent ) override;
 
     void setTransitions() override;
 
     SCH_EDIT_FRAME* m_schFrame;
+
+    std::atomic<double> m_progress;
+
+    std::mutex m_mutex;
+
+    wxString m_status;
 };
 
 #endif

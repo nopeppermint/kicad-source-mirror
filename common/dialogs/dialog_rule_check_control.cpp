@@ -33,10 +33,6 @@ DIALOG_RULE_CHECK_CONTROL::DIALOG_RULE_CHECK_CONTROL( RULE_CHECK_MANAGER_BASE* a
         m_manager( aManager )
 {
     m_btnBrowseReportPath->SetBitmap( KiBitmap( folder_xpm ) );
-
-    m_manager->GetEngine()->SetCallbacks(
-            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineFinished, this, _1 ),
-            std::bind( &DIALOG_RULE_CHECK_CONTROL::onEngineProgress, this, _1, _2 ) );
 }
 
 
@@ -89,7 +85,7 @@ void DIALOG_RULE_CHECK_CONTROL::OnStartChecksClick( wxCommandEvent& event )
 }
 
 
-void DIALOG_RULE_CHECK_CONTROL::onEngineFinished( bool aChecksPassed )
+void DIALOG_RULE_CHECK_CONTROL::OnEngineFinished( bool aChecksPassed )
 {
     m_progressBar->SetValue( 100 );
     m_progressBar->Hide();
@@ -98,7 +94,7 @@ void DIALOG_RULE_CHECK_CONTROL::onEngineFinished( bool aChecksPassed )
 }
 
 
-void DIALOG_RULE_CHECK_CONTROL::onEngineProgress( double aProgress, wxString aStatusMessage )
+void DIALOG_RULE_CHECK_CONTROL::OnEngineProgress( double aProgress, wxString aStatusMessage )
 {
     m_progressBar->SetValue( 100 * aProgress );
     m_txtStatus->SetLabel( aStatusMessage );

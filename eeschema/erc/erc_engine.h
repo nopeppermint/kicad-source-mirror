@@ -41,8 +41,6 @@ public:
 
     bool Start() override;
 
-    double GetProgress() override;
-
     void WaitForFinish();
 
     void Abort() override;

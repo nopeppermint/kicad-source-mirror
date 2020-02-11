@@ -286,7 +286,10 @@ SCH_PAINTER::SHADOW_TYPE SCH_PAINTER::getShadowType( const EDA_ITEM* aItem, int 
     if( aLayer != LAYER_SELECTION_SHADOWS )
         return SHADOW_TYPE::NONE;
 
-    SHADOW_TYPE shadow = aItem->IsSelected() ? SHADOW_TYPE::SELECTION : SHADOW_TYPE::NONE;
+    if( aItem->IsSelected() )
+        return SHADOW_TYPE::SELECTION;
+
+    SHADOW_TYPE shadow = SHADOW_TYPE::NONE;
 
     if( !aItem->GetViolationsList().empty() )
     {

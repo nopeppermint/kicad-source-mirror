@@ -34,10 +34,6 @@ public:
 
     ~DIALOG_ERC_CONTROL();
 
-protected:
-
-    void onEngineFinished( bool aChecksPassed ) override;
-
 private:
 
     ERC_MANAGER* getManager();
