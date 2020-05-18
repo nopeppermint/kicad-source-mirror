@@ -1,5 +1,47 @@
+# Enable build config validation (opt-in)
+version: ~> 1.0
+
+# Default build environment
 os: osx
 osx_image: xcode11.4
-compiler: clang
-    packages:
-      - cmake
+
+# Default programming language
+language: cpp
+
+jobs:
+  include:
+ - name: OSX/clang/CMake build
+      os: osx
+      # The XCode version should match that on the build server!
+      osx_image: xcode9.4
+      compiler: clang
+      cache:
+        ccache: true
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
+      env: >-
+        DISPLAY=:99.0
+        CMAKE_BUILD_PARALLEL_LEVEL=4
+        CTEST_PARALLEL_LEVEL=1
+      before_install:
+        - brew install ccache
+        - export PATH="/usr/local/opt/ccache/bin:$PATH"
+        - cmake --version
+        - ccache -s
+      install:
+        - mkdir cmake_build
+        - cd cmake_build..
+        - cmake -DCMAKE_BUILD_TYPE=Debug ../../ -DwxWidgets_USE_DEBUG=ON -DKICAD_SPICE=OFF
+        - cmake --build .
+        - sudo cmake --build . --target install
+      before_cache:
+        # Avoid indefinite cache growth
+        - brew cleanup
+        # Cache only .git files under "/usr/local/Homebrew" so "brew update"
+        # does not take 5min every build
+        # Source: https://discourse.brew.sh/t/best-practice-for-homebrew-on-travis-brew-update-is-5min-to-build-time/5215/12
+        - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete
+
+git:
+  depth: 1
