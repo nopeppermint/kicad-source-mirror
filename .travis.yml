@@ -1,3 +1,5 @@
 os: osx
 osx_image: xcode11.4
 compiler: clang
+    packages:
+      - cmake
